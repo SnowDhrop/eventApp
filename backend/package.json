@@ -8,5 +8,8 @@
     "start": "node server.js"
   },
   "author": "Snow Drop",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "http": "^0.0.1-security"
+  }
 }
