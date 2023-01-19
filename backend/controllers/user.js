@@ -1,5 +1,11 @@
+const { validationResult } = require("express-validator");
+
 exports.signup = (req, res, next) => {
-	// SANITIZE DATAS
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
 
 	res.status(201).json({ pouet: req.body });
 };
