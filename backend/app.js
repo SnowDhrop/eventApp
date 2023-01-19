@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 
+require("./src/database/connection");
+
 const userRoutes = require("./routes/user");
 
 const app = express();
