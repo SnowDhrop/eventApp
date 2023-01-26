@@ -1,6 +1,6 @@
-const { check, validationResult } = require("express-validator");
+import { check } from "express-validator";
 
-exports.signup = [
+export const signupValidator = [
 	check("email", "Veuillez écrire un email")
 		.isEmail()
 		.trim()

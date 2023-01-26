@@ -1,6 +1,6 @@
-const { validationResult } = require("express-validator");
+import { validationResult } from "express-validator";
 
-exports.signup = (req, res, next) => {
+export const signupCtrl = (req, res, next) => {
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {

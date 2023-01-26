@@ -1,6 +1,7 @@
-const Sequelize = require("sequelize");
+import Sequelize from "sequelize";
+const sequelize = new Sequelize("sqlite::memory:");
 
-module.exports = sequelize.define("User", {
+const User = sequelize.define("User", {
 	id: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -23,6 +24,14 @@ module.exports = sequelize.define("User", {
 		type: Sequelize.STRING(),
 		allowNull: false,
 	},
+	created_at: {
+		type: Sequelize.DATE,
+		allowNull: false,
+	},
+	updated_at: {
+		type: Sequelize.DATE,
+		allowNull: false,
+	},
 });
 
 sequelize
@@ -33,3 +42,5 @@ sequelize
 	.catch((error) => {
 		console.error("Unable to create tables : ", error);
 	});
+
+export default User;

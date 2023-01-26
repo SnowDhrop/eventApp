@@ -1,10 +1,10 @@
-const express = require("express");
+import express from "express";
+
 const router = express.Router();
 
-const validator = require("./../validators/user");
+import { signupValidator } from "./../validators/user.js";
+import { signupCtrl } from "./../controllers/user.js";
 
-const userCtrl = require("./../controllers/user");
+router.post("/", signupValidator, signupCtrl);
 
-router.post("/", validator.signup, userCtrl.signup);
-
-module.exports = router;
+export default router;

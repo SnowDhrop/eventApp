@@ -1,9 +1,9 @@
-const express = require("express");
-const path = require("path");
+import express from "express";
+import path from "path";
 
-require("./src/database/connection");
+import("./src/database/connection.js");
 
-const userRoutes = require("./routes/user");
+import userRoutes from "./routes/user.js";
 
 const app = express();
 
@@ -24,4 +24,4 @@ app.use((req, res, next) => {
 
 app.use("/auth", userRoutes);
 
-module.exports = app;
+export default app;
