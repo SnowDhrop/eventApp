@@ -24,6 +24,10 @@ const User = sequelize.define("User", {
 		type: Sequelize.STRING(),
 		allowNull: false,
 	},
+	age: {
+		type: Sequelize.INTEGER,
+		allowNull: false,
+	},
 	created_at: {
 		type: Sequelize.DATE,
 		allowNull: false,

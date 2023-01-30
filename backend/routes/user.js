@@ -2,9 +2,21 @@ import express from "express";
 
 const router = express.Router();
 
-import { signupValidator } from "./../validators/user.js";
+import {
+	emailValidator,
+	userNameValidator,
+	passwordValidator,
+	ageValidator,
+} from "./../validators/user.js";
 import { signupCtrl } from "./../controllers/user.js";
 
-router.post("/", signupValidator, signupCtrl);
+router.post(
+	"/",
+	emailValidator,
+	userNameValidator,
+	passwordValidator,
+	ageValidator,
+	signupCtrl
+);
 
 export default router;
