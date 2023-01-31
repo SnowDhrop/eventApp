@@ -11,10 +11,12 @@
 	"author": "Snow Drop",
 	"license": "ISC",
 	"dependencies": {
+		"bcrypt": "^5.1.0",
 		"dotenv": "^16.0.3",
 		"express": "^4.18.2",
 		"express-validator": "^6.14.3",
 		"http": "^0.0.1-security",
+		"jsonwebtoken": "^9.0.0",
 		"mysql2": "^3.0.1",
 		"path": "^0.12.7",
 		"sequelize": "^6.28.0",

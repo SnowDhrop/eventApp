@@ -1,7 +1,9 @@
 import express from "express";
 import path from "path";
 
-import("./src/database/connection.js");
+// import("./src/database/connection.js");
+
+import sequelize from "./src/models/index.js";
 
 import userRoutes from "./routes/user.js";
 

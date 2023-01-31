@@ -1,18 +1,13 @@
 import Sequelize from "sequelize";
 import dotenv from "dotenv";
-import User from "../models/User.js";
 
 dotenv.config();
 
-const host = process.env.HOST;
-const dbName = process.env.DATABASE;
-const dbUser = process.env.DBUSER;
-const dbMdp = process.env.DBMDP;
-const dialect = process.env.DIALECT;
+const { HOST, DATABASE, DBUSER, DBMDP, DIALECT } = process.env;
 
-export const sequelize = new Sequelize(dbName, dbUser, dbMdp, {
-	host: host,
-	dialect: dialect,
+const sequelize = new Sequelize(DATABASE, DBUSER, DBMDP, {
+	host: HOST,
+	dialect: DIALECT,
 	pool: {
 		max: 5,
 		min: 0,
@@ -21,14 +16,13 @@ export const sequelize = new Sequelize(dbName, dbUser, dbMdp, {
 	logging: false,
 });
 
-const UserModel = User(sequelize);
-
 sequelize
 	.authenticate()
 	.then(() => {
 		console.log("Connection has been established successfully.");
 
-		UserModel.sync({ force: false })
+		sequelize
+			.sync({ force: false })
 			.then(() => {
 				console.log("Tables created successfully!");
 			})
@@ -39,3 +33,5 @@ sequelize
 	.catch((err) => {
 		console.error("Unable to connect to the database:", err);
 	});
+
+export default sequelize;

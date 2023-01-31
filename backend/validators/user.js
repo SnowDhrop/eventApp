@@ -46,7 +46,7 @@ export const ageValidator = [
 		.isNumeric()
 		.withMessage("Your age must be a number")
 		.isInt({ min: 16, max: 120 })
-		.withMessage("Minimum age required is 16")
+		.withMessage("Minimum age required is 16 years")
 		.trim()
 		.escape(),
 ];
