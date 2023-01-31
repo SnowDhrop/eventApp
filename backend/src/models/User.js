@@ -27,14 +27,6 @@ const User = {
 		type: Sequelize.INTEGER,
 		allowNull: false,
 	},
-	created_at: {
-		type: Sequelize.DATE,
-		allowNull: true,
-	},
-	updated_at: {
-		type: Sequelize.DATE,
-		allowNull: true,
-	},
 };
 
 export default User;

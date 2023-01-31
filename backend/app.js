@@ -24,6 +24,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use("/auth", userRoutes);
+app.use("/user", userRoutes);
 
 export default app;
