@@ -8,19 +8,18 @@ export const emailValidator = [
 		.normalizeEmail(),
 ];
 
-export const userNameValidator = [
-	check("pseudo", "Choose a username")
+export const pseudoValidator = [
+	check("pseudo", "Choose a pseudo")
 		.isLength({ min: 2, max: 8 })
-		.withMessage("Username must have between 2 and 8 characters")
+		.withMessage("Your pseudo must have between 2 and 8 characters")
 		.isString()
-		.withMessage("Username can't have special characters")
+		.withMessage("Your pseudo can't have special characters")
 		.matches(/^[a-zA-Z0-9]+$/)
 		.withMessage(
-			"Your username must contain only numbers and letters without spaces"
+			"Your pseudo must contain only numbers and letters without spaces"
 		)
 		.trim()
-		.escape()
-		.normalizeEmail(),
+		.escape(),
 ];
 
 export const passwordValidator = [
@@ -41,11 +40,18 @@ export const passwordValidator = [
 		.escape(),
 ];
 
-export const ageValidator = [
-	check("age", "Say us your age")
-		.isNumeric()
-		.withMessage("Your age must be a number")
-		.isInt({ min: 16, max: 120 })
+const minAge = new Date();
+minAge.setFullYear(minAge.getFullYear() - 16);
+
+export const birthdayValidator = [
+	check("birthday", "We need your bithday date")
+		// Format norme ISO 8601 YYYY-MM-DD.
+		.isISO8601()
+		.withMessage("Please  send an ISO 8601 format date")
+		.custom((value) => {
+			const date = new Date(value);
+			return date <= minAge;
+		})
 		.withMessage("Minimum age required is 16 years")
 		.trim()
 		.escape(),

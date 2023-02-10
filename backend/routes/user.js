@@ -3,25 +3,44 @@ const router = express.Router();
 
 import {
 	emailValidator,
-	userNameValidator,
+	pseudoValidator,
 	passwordValidator,
-	ageValidator,
+	birthdayValidator,
 } from "./../validators/user.js";
 
-import { signupCtrl, loginCtrl, getOneCtrl } from "./../controllers/user.js";
+import {
+	signupCtrl,
+	loginCtrl,
+	getOneCtrl,
+	updateCtrl,
+	deleteCtrl,
+} from "./../controllers/user.js";
 import auth from "./../middlewares/auth.js";
+import userVerif from "./../middlewares/userVerif.js";
 
 router.post(
 	"/signup",
 	emailValidator,
-	userNameValidator,
+	pseudoValidator,
 	passwordValidator,
-	ageValidator,
+	birthdayValidator,
 	signupCtrl
 );
 
 router.get("/login", emailValidator, passwordValidator, loginCtrl);
 
 router.get("/:id", auth, getOneCtrl);
+
+router.put(
+	"/:id",
+	auth,
+	userVerif,
+	emailValidator,
+	pseudoValidator,
+	passwordValidator,
+	updateCtrl
+);
+
+router.delete("/:id", auth, userVerif, deleteCtrl);
 
 export default router;

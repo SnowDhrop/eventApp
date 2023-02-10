@@ -10,6 +10,7 @@ const User = {
 	pseudo: {
 		type: Sequelize.STRING(50),
 		allowNull: false,
+		unique: true,
 	},
 	email: {
 		type: Sequelize.STRING(255),
@@ -18,13 +19,15 @@ const User = {
 	},
 	is_admin: {
 		type: Sequelize.BOOLEAN,
+		defaultValue: false,
+		allowNull: false,
 	},
 	password: {
 		type: Sequelize.STRING(),
 		allowNull: false,
 	},
-	age: {
-		type: Sequelize.INTEGER,
+	birthday: {
+		type: Sequelize.DATEONLY,
 		allowNull: false,
 	},
 };
