@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 
 const User = {
-	id: {
+	id_user: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
 		autoIncrement: true,

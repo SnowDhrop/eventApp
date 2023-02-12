@@ -108,7 +108,22 @@ export const getOneCtrl = (req, res, next) => {
 
 	User.findOne({
 		where: { id: req.params.id },
-		attributes: ["pseudo", "email", "age", "createdAt", "updatedAt"],
+		attributes: ["pseudo", "email", "birthday", "createdAt", "updatedAt"],
+	})
+		.then((user) => {
+			if (user == null) {
+				throw "User doesn't found";
+			}
+			res.status(200).json({ user });
+		})
+		.catch((err) => res.status(400).json({ err }));
+};
+
+export const getAllCtrl = (req, res, next) => {
+	const User = sequelize.models.user;
+
+	User.findAll({
+		attributes: ["pseudo"],
 	})
 		.then((user) => {
 			if (user == null) {
