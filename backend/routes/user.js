@@ -12,6 +12,7 @@ import {
 	signupCtrl,
 	loginCtrl,
 	getOneCtrl,
+	getAllCtrl,
 	updateCtrl,
 	deleteCtrl,
 } from "./../controllers/user.js";
@@ -29,7 +30,11 @@ router.post(
 
 router.get("/login", emailValidator, passwordValidator, loginCtrl);
 
-router.get("/:id", auth, getOneCtrl);
+router.get("/search", auth, getAllCtrl);
+// router.get("/search/:id", auth, getOneCtrl);
+// router.get("/search/pseudo=:pseudo", auth, getOneCtrl);
+// router.get("/search/email=:email", auth, getOneCtrl);
+router.get("/search/:param", auth, getOneCtrl);
 
 router.put(
 	"/:id",

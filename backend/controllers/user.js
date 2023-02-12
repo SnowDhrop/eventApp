@@ -106,8 +106,18 @@ export const loginCtrl = (req, res, next) => {
 export const getOneCtrl = (req, res, next) => {
 	const User = sequelize.models.user;
 
+	let whereClause = "";
+
+	if (req.params.param.includes("@")) {
+		whereClause = { email: req.params.param };
+	} else if (!parseInt(req.params.param)) {
+		whereClause = { pseudo: req.params.param };
+	} else {
+		whereClause = { id_user: req.params.param };
+	}
+
 	User.findOne({
-		where: { id: req.params.id },
+		where: whereClause,
 		attributes: ["pseudo", "email", "birthday", "createdAt", "updatedAt"],
 	})
 		.then((user) => {
@@ -126,8 +136,9 @@ export const getAllCtrl = (req, res, next) => {
 		attributes: ["pseudo"],
 	})
 		.then((user) => {
+			console.log(user);
 			if (user == null) {
-				throw "User doesn't found";
+				throw "Database empty";
 			}
 			res.status(200).json({ user });
 		})
