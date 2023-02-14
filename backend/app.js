@@ -27,6 +27,6 @@ app.use((req, res, next) => {
 
 app.use("/user", userRoutes);
 
-app.use("/events", eventRoutes);
+app.use("/event", eventRoutes);
 
 export default app;

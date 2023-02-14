@@ -1,17 +1,17 @@
 import { Sequelize } from "sequelize";
 
-const Category = {
-	id_category: {
+const Styles = {
+	id_style: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
 		autoIncrement: true,
 		primaryKey: true,
 	},
 	name: {
-		type: Sequelize.STRING(255),
+		type: Sequelize.toString(255),
 		allowNull: false,
 		unique: true,
 	},
 };
 
-export default Category;
+export default Styles;
