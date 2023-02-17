@@ -1,17 +1,37 @@
-const Sequelize = require("sequelize");
+import Sequelize from "sequelize";
+import dotenv from "dotenv";
 
-//  Connection to database
-const sequelize = new Sequelize("eventapp", "root", "", {
-	host: "127.0.0.1",
-	dialect: "mysql",
-	operatorsAliases: false,
-	operatorsAliases: 0,
+dotenv.config();
+
+const { HOST, DATABASE, DBUSER, DBMDP, DIALECT } = process.env;
+
+const sequelize = new Sequelize(DATABASE, DBUSER, DBMDP, {
+	host: HOST,
+	dialect: DIALECT,
+	pool: {
+		max: 5,
+		min: 0,
+		idle: 10000,
+	},
+	logging: false,
 });
 
-module.exports = sequelize;
-global.sequelize = sequelize;
+sequelize
+	.authenticate()
+	.then(() => {
+		console.log("Connection has been established successfully.");
 
-// Associations
-const User = require("../models/User");
+		sequelize
+			.sync({ force: false })
+			.then(() => {
+				console.log("Tables created successfully!");
+			})
+			.catch((error) => {
+				console.error("Unable to create tables : ", error);
+			});
+	})
+	.catch((err) => {
+		console.error("Unable to connect to the database:", err);
+	});
 
-//  One-to-Many v.2
+export default sequelize;

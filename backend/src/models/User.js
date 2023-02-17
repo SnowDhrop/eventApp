@@ -1,6 +1,6 @@
-const Sequelize = require("sequelize");
+import { Sequelize } from "sequelize";
 
-module.exports = sequelize.define("User", {
+const User = {
 	id: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -10,26 +10,26 @@ module.exports = sequelize.define("User", {
 	pseudo: {
 		type: Sequelize.STRING(50),
 		allowNull: false,
+		unique: true,
 	},
 	email: {
-		type: Sequelize.STRING(300),
+		type: Sequelize.STRING(255),
 		allowNull: false,
 		unique: true,
 	},
 	is_admin: {
 		type: Sequelize.BOOLEAN,
+		defaultValue: false,
+		allowNull: false,
 	},
 	password: {
 		type: Sequelize.STRING(),
 		allowNull: false,
 	},
-});
+	birthday: {
+		type: Sequelize.DATEONLY,
+		allowNull: false,
+	},
+};
 
-sequelize
-	.sync()
-	.then(() => {
-		console.log("Tables created successfully!");
-	})
-	.catch((error) => {
-		console.error("Unable to create tables : ", error);
-	});
+export default User;
