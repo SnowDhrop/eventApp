@@ -47,6 +47,15 @@ export const addressValidator = [
 		.escape(),
 ];
 
+export const cityValidator = [
+	check("city", "Where will be your event ?")
+		.optional({ checkFalsy: true })
+		.isLength({ min: 2, max: 40 })
+		.withMessage("Please give us a correct city")
+		.trim()
+		.escape(),
+];
+
 export const locationValidator = [
 	check(
 		"location",

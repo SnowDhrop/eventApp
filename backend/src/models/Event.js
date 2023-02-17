@@ -29,6 +29,10 @@ const Event = {
 		type: Sequelize.STRING(255),
 		allowNull: false,
 	},
+	city: {
+		type: Sequelize.STRING(255),
+		allowNull: false,
+	},
 	location: {
 		type: Sequelize.STRING(255),
 	},

@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import sequelize from "../src/database/connection.js";
 import { Op } from "sequelize";
 
+const User = sequelize.models.user;
+
 export const signupCtrl = (req, res, next) => {
 	//VALIDATORS
 	const errors = validationResult(req);
@@ -12,8 +14,6 @@ export const signupCtrl = (req, res, next) => {
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ errors: errors.array() });
 	}
-
-	const User = sequelize.models.user;
 
 	req.body.is_admin = req.body.isAdmin;
 
@@ -67,8 +67,6 @@ export const loginCtrl = (req, res, next) => {
 		return res.status(422).json({ errors: errors.array() });
 	}
 
-	const User = sequelize.models.user;
-
 	User.findOne({
 		where: { email: req.body.email },
 	})
@@ -103,8 +101,6 @@ export const loginCtrl = (req, res, next) => {
 };
 
 export const getOneCtrl = (req, res, next) => {
-	const User = sequelize.models.user;
-
 	let whereClause = "";
 
 	if (req.params.param.includes("@")) {
@@ -129,13 +125,10 @@ export const getOneCtrl = (req, res, next) => {
 };
 
 export const getAllCtrl = (req, res, next) => {
-	const User = sequelize.models.user;
-
 	User.findAll({
 		attributes: ["pseudo"],
 	})
 		.then((user) => {
-			console.log(user);
 			if (user == null) {
 				throw "Database empty";
 			}
@@ -150,8 +143,6 @@ export const updateCtrl = (req, res, next) => {
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ errors: errors.array() });
 	}
-
-	const User = sequelize.models.user;
 
 	bcrypt
 		.hash(req.body.password, 10)
@@ -175,8 +166,6 @@ export const updateCtrl = (req, res, next) => {
 };
 
 export const deleteCtrl = (req, res, next) => {
-	const User = sequelize.models.user;
-
 	User.destroy({
 		where: { id: req.params.id },
 	})

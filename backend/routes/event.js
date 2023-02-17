@@ -1,5 +1,5 @@
 import express from "express";
-import { getOneCtrl, createCtrl } from "../controllers/event.js";
+import { createCtrl, getOneCtrl, getAllCtrl } from "../controllers/event.js";
 const router = express.Router();
 
 import auth from "./../middlewares/auth.js";
@@ -10,6 +10,7 @@ import {
 	categoryValidator,
 	participantsValidator,
 	addressValidator,
+	cityValidator,
 	locationValidator,
 	startDateValidator,
 	endDateValidator,
@@ -18,6 +19,22 @@ import {
 } from "./../validators/event.js";
 
 router.get("/:id", getOneCtrl);
-router.post("/", auth, createCtrl);
+router.get("/", getAllCtrl);
+router.post(
+	"/",
+	auth,
+	titleValidator,
+	descriptionValidator,
+	categoryValidator,
+	participantsValidator,
+	addressValidator,
+	cityValidator,
+	locationValidator,
+	startDateValidator,
+	endDateValidator,
+	privateValidator,
+	activeValidator,
+	createCtrl
+);
 
 export default router;
