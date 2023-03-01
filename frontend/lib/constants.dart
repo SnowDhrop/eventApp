@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:math';
 
 class Constants {
   // Primary color palette
@@ -11,19 +14,12 @@ class Constants {
   static const Color accentTealColor = Color(0xff44BBA4); // TEAL
   static const Color transparent = Color.fromARGB(0, 0, 0, 0); // Transparent
   static const Color primaryWhite = Color.fromARGB(255, 230, 224, 224); // White
-  static const Color secondaryWhite =
-      Color.fromARGB(185, 209, 209, 209); // Light White
+  static const Color whiteText = Color(0xffFFFDF7); // White Text
 
   // Background colors
-  static const Color primaryBackground =
-      Color.fromARGB(255, 8, 31, 68); // WHITE
-  static const Color secondaryBackground =
-      Color.fromARGB(255, 39, 57, 110); // GREY
-  static const Color secondaryAppbarBackground =
-      Color.fromARGB(255, 49, 51, 51);
-  static const Color blackBackground = Color(0xff171A1D); // WHO BLUE 2
-  static const Color appbarBackground = Color.fromARGB(255, 31, 32, 32);
-  static const Color homeHeaderGreenColor = Color(0xffFAE8A9);
+  static const Color darkBackground = Color(0xff100c13); // Dark Purple
+  static const Color lightBackground = Color(0xff8656ba); // Light Purple
+  static const Color mediumBackground = Color(0xff0d0216); // Medium Purple
 
   // Element colors
   static const Color bodyTextColor = Color(0xff272626); // CHARCOAL
@@ -79,18 +75,30 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Constants.primaryBackground,
-            Constants.secondaryBackground,
-            Constants.blackBackground
-          ],
-        ),
-      ),
-    );
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Constants.darkBackground,
+                Constants.lightBackground,
+                Constants.darkBackground
+              ],
+              stops: [
+                0.0,
+                0.5,
+                1.0,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            image: DecorationImage(
+                image: const AssetImage(
+                  'assets/background/noise_background.jpg',
+                ),
+                colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.05), BlendMode.dstATop),
+                repeat: ImageRepeat.repeat)));
   }
 }
 

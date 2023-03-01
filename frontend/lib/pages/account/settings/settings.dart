@@ -5,16 +5,16 @@ import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
-class Language extends StatefulWidget {
+class Settings extends StatefulWidget {
   final BuildContext context;
 
-  const Language({required this.context, Key? key}) : super(key: key);
+  const Settings({required this.context, Key? key}) : super(key: key);
 
   @override
-  LanguageState createState() => LanguageState();
+  SettingsState createState() => SettingsState();
 }
 
-class LanguageState extends State<Language> {
+class SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     var translation = AppLocalizations.of(widget.context)!;
@@ -43,47 +43,12 @@ class LanguageState extends State<Language> {
                         height: 50,
                         child: TextButton(
                           style: style,
-                          onPressed: () {
-                            Provider.of<LocaleModel>(context, listen: false)
-                                .setLocale(const Locale('fr'));
-                          },
+                          onPressed: () {},
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const <Widget>[
                               TextSection(
-                                text: 'Français',
-                              ),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                size: 24,
-                                color: Constants.primaryWhite,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Divider(
-                    thickness: 2,
-                    color: Constants.primaryDarkColor,
-                  ),
-                  Consumer<LocaleModel>(
-                    builder: (context, localeModel, child) => Builder(
-                      builder: (context) => SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: TextButton(
-                          style: style,
-                          onPressed: () {
-                            Provider.of<LocaleModel>(context, listen: false)
-                                .setLocale(const Locale('en'));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const <Widget>[
-                              TextSection(
-                                text: 'English',
+                                text: 'Button',
                               ),
                               Icon(
                                 Icons.chevron_right_rounded,

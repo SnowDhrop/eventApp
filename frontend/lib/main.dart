@@ -2,12 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:frontend/components/language/locale.dart';
+import 'package:frontend/pages/authentification/login.dart';
 import 'package:provider/provider.dart';
-import 'home.dart';
 import 'constants.dart';
 
 void main() {
-  runApp(const App());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => LocaleModel(),
+      child: const App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -39,31 +44,32 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
-  startTime() async {
+  startTime(BuildContext context) async {
     var duration = const Duration(seconds: 2);
-    return Timer(duration, navigationPage);
+    return Timer(duration, () => navigationPage(context));
   }
 
-  void navigationPage() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const MainHome()));
+  void navigationPage(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   @override
   void initState() {
     super.initState();
-    startTime();
+    startTime(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(children: const [
-      Background(),
+        body: Stack(children: [
+      const Background(),
       Center(
-          child: TextSection(
-        text: 'Maestrip',
-      )),
+          child: Image.asset(
+        'assets/logo/logo_blanc.png',
+        width: MediaQuery.of(context).size.width * 0.9,
+      ))
     ]));
   }
 }

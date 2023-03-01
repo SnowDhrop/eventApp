@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:frontend/constants.dart';
 import 'package:frontend/components/language/locale.dart';
 
 class LanguageButton extends StatelessWidget {
@@ -31,7 +30,7 @@ class LanguageButton extends StatelessWidget {
                   ],
                   onChanged: (String? value) {
                     if (value != null) {
-                      localeModel.set(Locale(value));
+                      localeModel.setLocale(Locale(value));
                     }
                   },
                 )));
