@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:frontend/constants.dart';
+
 class EventsPage extends StatefulWidget {
-  const EventsPage({super.key});
+  const EventsPage({Key? key}) : super(key: key);
 
   @override
   EventsPageState createState() => EventsPageState();
@@ -11,11 +13,30 @@ class EventsPage extends StatefulWidget {
 class EventsPageState extends State<EventsPage> {
   @override
   Widget build(BuildContext context) {
+    var translation = AppLocalizations.of(context)!;
+    var buttonWidth = MediaQuery.of(context).size.width * 0.95;
+
     return Scaffold(
-        backgroundColor: Colors.blueGrey,
-        appBar: AppBar(),
-        body: Center(
-          child: Text(AppLocalizations.of(context)!.events),
-        ));
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+        ),
+        body: Stack(children: [
+          const Background(),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: ListView(
+                padding: const EdgeInsets.all(8),
+                children: [
+                  Center(
+                    child: TextSection(
+                      text: translation.events,
+                    ),
+                  ),
+                ],
+              ))
+        ]));
   }
 }

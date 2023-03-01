@@ -3,14 +3,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:frontend/constants.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class ProfilPage extends StatefulWidget {
+  const ProfilPage({Key? key}) : super(key: key);
 
   @override
-  HomePageState createState() => HomePageState();
+  ProfilPageState createState() => ProfilPageState();
 }
 
-class HomePageState extends State<HomePage> {
+class ProfilPageState extends State<ProfilPage> {
   @override
   Widget build(BuildContext context) {
     var translation = AppLocalizations.of(context)!;
@@ -32,7 +32,7 @@ class HomePageState extends State<HomePage> {
                 children: [
                   Center(
                     child: TextSection(
-                      text: translation.home,
+                      text: translation.profil,
                     ),
                   ),
                 ],

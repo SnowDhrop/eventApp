@@ -2,8 +2,11 @@
     "home": "Accueil",
     "map": "Carte",
     "events": "Évènements",
+    "profil": "Profile",
     "account": "Compte",
     "language": "Langage",
     "languagefr": "Français",
-    "languageen": "Anglais"
+    "languageen": "Anglais",
+    "settings": "Paramètres de l'application",
+    "disconnect": "Se déconnecter"
 }
