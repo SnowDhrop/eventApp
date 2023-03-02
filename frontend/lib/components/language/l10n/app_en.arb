@@ -1,0 +1,12 @@
+{
+    "home": "Home",
+    "map": "Map",
+    "events": "Events",
+    "profil": "Profil",
+    "account": "Account",
+    "language": "Language",
+    "languagesfr": "French",
+    "languagesen": "English",
+    "settings": "Settings",
+    "disconnect": "Sign Out"
+}
