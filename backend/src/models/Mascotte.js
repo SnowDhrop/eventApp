@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const Mascotte = {
+const Mascotte = sequelize.define("mascotte", {
 	id_mascotte: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -22,6 +23,6 @@ const Mascotte = {
 		allowNull: false,
 		defaultValue: 0,
 	},
-};
+});
 
 export default Mascotte;

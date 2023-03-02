@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const User = {
+const User = sequelize.define("user", {
 	id_user: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -30,6 +31,6 @@ const User = {
 		type: Sequelize.DATEONLY,
 		allowNull: false,
 	},
-};
+});
 
 export default User;

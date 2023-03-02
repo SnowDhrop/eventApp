@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const Styles = {
+const Style = sequelize.define("style", {
 	id_style: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -8,10 +9,10 @@ const Styles = {
 		primaryKey: true,
 	},
 	name: {
-		type: Sequelize.toString(255),
+		type: Sequelize.STRING(255),
 		allowNull: false,
 		unique: true,
 	},
-};
+});
 
-export default Styles;
+export default Style;

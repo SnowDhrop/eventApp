@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const Pic = {
+const Pic = sequelize.define("pic", {
 	id_pic: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -16,6 +17,6 @@ const Pic = {
 		allowNull: false,
 		defaultValue: "private",
 	},
-};
+});
 
 export default Pic;

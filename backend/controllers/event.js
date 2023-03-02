@@ -5,6 +5,7 @@ import sequelize from "../src/database/connection.js";
 import { Op } from "sequelize";
 
 const Event = sequelize.models.event;
+const Users_Event = sequelize.models.users_event;
 
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
@@ -15,36 +16,32 @@ export const createCtrl = (req, res, next) => {
 
 	Event.create({
 		...req.body,
+		id_creator: req.auth.userId,
 	})
 		.then(() => res.status(201).json({ message: "Event added" }))
 		.catch((err) => res.status(400).json({ err }));
 };
 
 export const getOneCtrl = (req, res, next) => {
-	let whereClause = "";
-
-	if (req.params.param.includes("@")) {
-		whereClause = { email: req.params.param };
-	} else if (!parseInt(req.params.param)) {
-		whereClause = { pseudo: req.params.param };
-	} else {
-		whereClause = { id_user: req.params.param };
-	}
-
 	Event.findOne({
-		where: whereClause,
+		where: { id_event: req.params.id },
 		attributes: [
 			"title",
 			"description",
 			"participants",
+			"participants_max",
 			"address",
 			"start_event",
 			"end_event",
+			"private",
+			"active",
 		],
 	})
 		.then((user) => {
 			if (user == null) {
 				throw "Event doesn't found";
+			} else if (user.active !== 1) {
+				throw "Event not active";
 			}
 			res.status(200).json({ user });
 		})
@@ -69,4 +66,39 @@ export const getAllCtrl = (req, res, next) => {
 			res.status(200).json({ event });
 		})
 		.catch((err) => res.status(400).json({ err }));
+};
+
+export const subscribeCtrl = (req, res, next) => {
+	Event.findOne({
+		where: { id_event: req.params.id },
+		attributes: ["active", "private"],
+	})
+		.then((user) => {
+			// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
+			if (user.active === false || user.private === true) {
+				res.status(404).json({
+					err: "This event is not active or private",
+				});
+			}
+
+			Users_Event.create({
+				id_user: req.auth.userId,
+				id_event: req.params.id,
+			})
+				.then(() =>
+					res
+						.status(201)
+						.json({ message: "You have subscribe to this event" })
+				)
+				.catch((err) => res.status(500).json({ err: "Server error" }));
+		})
+		.catch((err) =>
+			res.status(404).json({
+				err: "Event not found",
+			})
+		);
+
+	// Je fais une requête pour vérifier que l'event est public et non complet en récupérant l'id de l'event dans l'url
+
+	// Je crée une entrée dans la table de jointure users_events avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
 };

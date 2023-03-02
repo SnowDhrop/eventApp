@@ -1,11 +1,20 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const Event = {
+const Event = sequelize.define("event", {
 	id_event: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
 		autoIncrement: true,
 		primaryKey: true,
+	},
+	id_creator: {
+		type: Sequelize.INTEGER(11),
+		allowNull: false,
+		references: {
+			model: "users",
+			key: "id_user",
+		},
 	},
 	title: {
 		type: Sequelize.STRING(255),
@@ -20,10 +29,17 @@ const Event = {
 		allowNull: false,
 		// FOREIGN KEY
 	},
-	participants: {
+	id_style: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
+		// FOREIGN KEY
+	},
+	participants: {
+		type: Sequelize.INTEGER(11),
 		defaultValue: 0,
+	},
+	participants_max: {
+		type: Sequelize.INTEGER(11),
 	},
 	address: {
 		type: Sequelize.STRING(255),
@@ -31,7 +47,7 @@ const Event = {
 	},
 	city: {
 		type: Sequelize.STRING(255),
-		allowNull: false,
+		defaultValue: "Montpellier",
 	},
 	location: {
 		type: Sequelize.STRING(255),
@@ -53,6 +69,6 @@ const Event = {
 		allowNull: false,
 		defaultValue: 1,
 	},
-};
+});
 
 export default Event;

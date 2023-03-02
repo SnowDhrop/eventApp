@@ -1,5 +1,10 @@
 import express from "express";
-import { createCtrl, getOneCtrl, getAllCtrl } from "../controllers/event.js";
+import {
+	createCtrl,
+	getOneCtrl,
+	getAllCtrl,
+	subscribeCtrl,
+} from "../controllers/event.js";
 const router = express.Router();
 
 import auth from "./../middlewares/auth.js";
@@ -16,10 +21,12 @@ import {
 	endDateValidator,
 	privateValidator,
 	activeValidator,
+	participantsMaxValidator,
 } from "./../validators/event.js";
 
 router.get("/:id", getOneCtrl);
 router.get("/", getAllCtrl);
+
 router.post(
 	"/",
 	auth,
@@ -27,6 +34,7 @@ router.post(
 	descriptionValidator,
 	categoryValidator,
 	participantsValidator,
+	participantsMaxValidator,
 	addressValidator,
 	cityValidator,
 	locationValidator,
@@ -36,5 +44,7 @@ router.post(
 	activeValidator,
 	createCtrl
 );
+
+router.post("/:id", auth, subscribeCtrl);
 
 export default router;

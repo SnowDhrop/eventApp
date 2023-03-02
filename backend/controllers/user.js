@@ -88,9 +88,9 @@ export const loginCtrl = (req, res, next) => {
 
 					//                  Token creation
 					res.status(200).json({
-						userId: user.id,
-						isAdmin: user.isAdmin,
-						token: jwt.sign({ userId: user.id }, "A_CHANGER", {
+						// userId: user.id_user,
+						// isAdmin: user.is_admin,
+						token: jwt.sign({ userId: user.id_user }, "A_CHANGER", {
 							expiresIn: "24h",
 						}),
 					});

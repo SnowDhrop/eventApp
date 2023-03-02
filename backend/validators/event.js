@@ -19,11 +19,17 @@ export const descriptionValidator = [
 ];
 
 export const categoryValidator = [
-	check("category", "Select a category")
-		.isLength({ min: 2, max: 45 })
-		.withMessage("The category name must have between 2 and 45 characters")
-		.isString()
-		.withMessage("The category name can't have special characters")
+	check("id_category", "Select a category")
+		.isNumeric()
+		.withMessage("Please select a category")
+		.trim()
+		.escape(),
+];
+
+export const styleValidator = [
+	check("id_category", "Select a category")
+		.isNumeric()
+		.withMessage("Please select a style")
 		.trim()
 		.escape(),
 ];
@@ -31,10 +37,20 @@ export const categoryValidator = [
 export const participantsValidator = [
 	check(
 		"participants",
-		"If you already known how many person will come, tell us "
+		"If you already known how many people will come, tell us "
 	)
+		.optional()
 		.isNumeric()
 		.withMessage("The number of participants must be a number")
+		.trim()
+		.escape(),
+];
+
+export const participantsMaxValidator = [
+	check("participants_max", "How many people can come ?")
+		.optional()
+		.isNumeric()
+		.withMessage("The number of participants max must be a number")
 		.trim()
 		.escape(),
 ];
@@ -49,7 +65,7 @@ export const addressValidator = [
 
 export const cityValidator = [
 	check("city", "Where will be your event ?")
-		.optional({ checkFalsy: true })
+		.optional()
 		.isLength({ min: 2, max: 40 })
 		.withMessage("Please give us a correct city")
 		.trim()
@@ -61,6 +77,7 @@ export const locationValidator = [
 		"location",
 		"If you know the exact position of the event (latitude/longitude), please tell us"
 	)
+		.optional()
 		.isLength({ min: 2, max: 30 })
 		.withMessage("Please give us a correct location")
 		.trim()
@@ -68,7 +85,7 @@ export const locationValidator = [
 ];
 
 export const startDateValidator = [
-	check("startDate", "When will begin your event ?")
+	check("start_event", "When will begin your event ?")
 		.isISO8601()
 		.toDate()
 		.withMessage("Choose a date")
@@ -77,7 +94,7 @@ export const startDateValidator = [
 ];
 
 export const endDateValidator = [
-	check("endDate", "When will finish your event ?")
+	check("end_event", "When will finish your event ?")
 		.isISO8601()
 		.toDate()
 		.withMessage("Choose a date")
@@ -95,6 +112,7 @@ export const privateValidator = [
 
 export const activeValidator = [
 	check("active", "Do you want to already set your event as active ?")
+		.optional()
 		.isNumeric()
 		.withMessage("Choose an answer")
 		.trim()

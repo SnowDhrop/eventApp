@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const Category = {
+const Category = sequelize.define("category", {
 	id_category: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -12,6 +13,6 @@ const Category = {
 		allowNull: false,
 		unique: true,
 	},
-};
+});
 
 export default Category;

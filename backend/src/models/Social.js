@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
+import sequelize from "../database/connection.js";
 
-const Social = {
+const Social = sequelize.define("social", {
 	//FOREIGN KEY
 	id_user_one: {
 		type: Sequelize.INTEGER(11),
@@ -15,6 +16,6 @@ const Social = {
 		type: Sequelize.STRING(255),
 		allowNull: false,
 	},
-};
+});
 
 export default Social;

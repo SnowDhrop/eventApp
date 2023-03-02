@@ -1,21 +1,29 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../database/connection.js";
 
-const Challenge = sequelize.define("challenge", {
-	id_challenge: {
+const Users_Event = sequelize.define("users_event", {
+	id: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
 		autoIncrement: true,
 		primaryKey: true,
 	},
-	name: {
-		type: Sequelize.STRING(255),
-		allowNull: false,
-	},
-	experienced_value: {
+	id_user: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
+		references: {
+			model: "User",
+			key: "id_user",
+		},
+	},
+	id_event: {
+		type: Sequelize.INTEGER(11),
+		allowNull: false,
+		references: {
+			model: "Event",
+			key: "id_event",
+		},
 	},
 });
 
-export default Challenge;
+export default Users_Event;
