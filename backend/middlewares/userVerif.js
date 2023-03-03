@@ -7,19 +7,19 @@ const userVerif = (req, res, next) => {
 
 		//      Check if user is admin
 		User.findOne({
-			where: { id: req.auth.userId },
+			where: { id_user: req.auth.userId },
 			attributes: ["is_admin"],
 		})
 			.then((admin) => {
 				if (admin.dataValues.isAdmin != true) {
 					//  Find user by id gave in params
 					User.findOne({
-						where: { id: req.params.id },
-						attributes: ["id"],
+						where: { id_user: req.params.id },
+						attributes: ["id_user"],
 					})
 						.then((user) => {
 							// Compare id of user with the id previously saved in req.auth
-							if (user.id !== req.auth.userId) {
+							if (user.id_user !== req.auth.userId) {
 								return res
 									.status(401)
 									.json({ message: "Unauthorized request" });

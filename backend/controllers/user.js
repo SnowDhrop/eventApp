@@ -155,7 +155,7 @@ export const updateCtrl = (req, res, next) => {
 					password: hash,
 				},
 				{
-					where: { id: req.params.id },
+					where: { id_user: req.params.id },
 				}
 			)
 				.then(() => res.status(201).json({ message: "User updated" }))
@@ -167,7 +167,7 @@ export const updateCtrl = (req, res, next) => {
 
 export const deleteCtrl = (req, res, next) => {
 	User.destroy({
-		where: { id: req.params.id },
+		where: { id_user: req.params.id },
 	})
 		.then(() => res.status(200).json({ message: "User deleted" }))
 		.catch((err) =>
