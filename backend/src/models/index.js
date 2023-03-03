@@ -37,4 +37,12 @@ Event.belongsToMany(User, {
 User.hasMany(Event, { foreignKey: "id_creator" });
 Event.belongsTo(User, { foreignKey: "id_creator" });
 
+// Relation between event and style
+Style.hasMany(Event, { foreignKey: "id_style" });
+Event.belongsTo(Style, { foreignKey: "id_style" });
+
+//Relation between event and category
+Category.hasMany(Event, { foreignKey: "id_category" });
+Event.belongsTo(Category, { foreignKey: "id_category" });
+
 export default sequelize;

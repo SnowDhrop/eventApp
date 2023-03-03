@@ -16,6 +16,22 @@ const Event = sequelize.define("event", {
 			key: "id_user",
 		},
 	},
+	id_style: {
+		type: Sequelize.INTEGER(11),
+		allowNull: false,
+		references: {
+			model: "styles",
+			key: "id_style",
+		},
+	},
+	id_category: {
+		type: Sequelize.INTEGER(11),
+		allowNull: false,
+		references: {
+			model: "categories",
+			key: "id_category",
+		},
+	},
 	title: {
 		type: Sequelize.STRING(255),
 		allowNull: false,
@@ -23,16 +39,6 @@ const Event = sequelize.define("event", {
 	description: {
 		type: Sequelize.STRING(255),
 		allowNull: false,
-	},
-	id_category: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false,
-		// FOREIGN KEY
-	},
-	id_style: {
-		type: Sequelize.INTEGER(11),
-		allowNull: false,
-		// FOREIGN KEY
 	},
 	participants: {
 		type: Sequelize.INTEGER(11),
