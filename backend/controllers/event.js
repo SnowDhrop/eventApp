@@ -102,3 +102,5 @@ export const subscribeCtrl = (req, res, next) => {
 
 	// Je crée une entrée dans la table de jointure users_events avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
 };
+
+//Modify event created
