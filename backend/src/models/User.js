@@ -8,6 +8,14 @@ const User = sequelize.define("user", {
 		autoIncrement: true,
 		primaryKey: true,
 	},
+	id_pic: {
+		type: Sequelize.INTEGER(11),
+		allowNull: false,
+		references: {
+			model: "pics",
+			key: "id_pic",
+		},
+	},
 	pseudo: {
 		type: Sequelize.STRING(50),
 		allowNull: false,

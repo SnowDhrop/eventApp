@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../database/connection.js";
 
-const Users_Event = sequelize.define("users_event", {
+const Users_Challenge = sequelize.define("users_challenges", {
 	id: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -16,14 +16,14 @@ const Users_Event = sequelize.define("users_event", {
 			key: "id_user",
 		},
 	},
-	id_event: {
+	id_challenge: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
 		references: {
-			model: "events",
-			key: "id_event",
+			model: "challenges",
+			key: "id_challenge",
 		},
 	},
 });
 
-export default Users_Event;
+export default Users_Challenge;
