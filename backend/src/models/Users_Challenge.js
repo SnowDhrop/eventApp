@@ -24,6 +24,10 @@ const Users_Challenge = sequelize.define("users_challenges", {
 			key: "id_challenge",
 		},
 	},
+	status: {
+		type: Sequelize.BOOLEAN,
+		allowNull: false,
+	},
 });
 
 export default Users_Challenge;

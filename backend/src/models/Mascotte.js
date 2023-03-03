@@ -8,10 +8,13 @@ const Mascotte = sequelize.define("mascotte", {
 		autoIncrement: true,
 		primaryKey: true,
 	},
-	//FOREIGN KEY
 	id_user: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
+		references: {
+			model: "users",
+			key: "id_user",
+		},
 	},
 	experience: {
 		type: Sequelize.INTEGER(11),

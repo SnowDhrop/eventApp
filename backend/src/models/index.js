@@ -64,4 +64,12 @@ Challenge.belongsToMany(User, {
 User.hasMany(Pic, { foreignKey: "id_pic" });
 Pic.belongsTo(User, { foreignKey: "id_pic" });
 
+// // Relation between users and socials
+// User.belongsTo(Social, { foreignKey: "id_user_one" });
+// User.belongsTo(Social, { foreignKey: "id_user_two" });
+
+// // Relation between users and mascotte
+// User.belongsTo(Mascotte, { foreignKey: "id_user" });
+// Mascotte.belongsTo(User, { foreignKey: "id_user" });
+
 export default sequelize;
