@@ -7,6 +7,9 @@ import sequelize from "./src/models/index.js";
 
 import userRoutes from "./routes/user.js";
 import eventRoutes from "./routes/event.js";
+import picRoutes from "./routes/pic.js";
+import styleRoutes from "./routes/style.js";
+import categoryRoutes from "./routes/category.js";
 
 const app = express();
 
@@ -28,5 +31,11 @@ app.use((req, res, next) => {
 app.use("/user", userRoutes);
 
 app.use("/event", eventRoutes);
+
+app.use("/pic", picRoutes);
+
+app.use("/style", styleRoutes);
+
+app.use("/category", categoryRoutes);
 
 export default app;

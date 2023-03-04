@@ -15,6 +15,7 @@ const User = sequelize.define("user", {
 			model: "pics",
 			key: "id_pic",
 		},
+		defaultValue: 1,
 	},
 	pseudo: {
 		type: Sequelize.STRING(50),

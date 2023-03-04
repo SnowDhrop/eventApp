@@ -76,9 +76,9 @@ export const subscribeCtrl = (req, res, next) => {
 		.then((user) => {
 			// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
 			if (user.active === false || user.private === true) {
-				res.status(404).json({
-					err: "This event is not active or private",
-				});
+				res.send
+					.status(404)
+					.json({ err: "This event is not active or private" });
 			}
 
 			Users_Event.create({
@@ -92,15 +92,52 @@ export const subscribeCtrl = (req, res, next) => {
 				)
 				.catch((err) => res.status(500).json({ err: "Server error" }));
 		})
-		.catch((err) =>
-			res.status(404).json({
-				err: "Event not found",
-			})
-		);
+		.catch((err) => res.status(404).json({ err: "Event not found" }));
 
 	// Je fais une requête pour vérifier que l'event est public et non complet en récupérant l'id de l'event dans l'url
 
 	// Je crée une entrée dans la table de jointure users_events avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
 };
 
-//Modify event created
+export const updateCtrl = (req, res, next) => {
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
+
+	Event.update(
+		{
+			id_style: req.body.id_style,
+			id_category: req.body.id_category,
+			title: req.body.title,
+			description: req.body.description,
+			address: req.body.address,
+			city: req.body.city,
+			location: req.body.location,
+			start_event: req.body.start_event,
+			end_event: req.body.end_event,
+			private: req.body.private,
+			active: req.body.active,
+		},
+		{
+			where: { id_event: req.params.id },
+		}
+	)
+		.then(() => res.status(200).json({ message: "Event updated" }))
+		.catch((err) =>
+			res.status(503).json({ message: "Server error", error: err })
+		);
+};
+
+export const deleteCtrl = (req, res, next) => {
+	Event.destroy({
+		where: { id_event: req.params.id },
+	})
+		.then(() => res.status(200).json({ message: "Event deleted" }))
+		.catch((err) =>
+			res
+				.status(400)
+				.json({ message: "Event can't be delete ", error: err })
+		);
+};
