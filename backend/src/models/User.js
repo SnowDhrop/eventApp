@@ -28,8 +28,8 @@ const User = sequelize.define("user", {
 		unique: true,
 	},
 	is_admin: {
-		type: Sequelize.BOOLEAN,
-		defaultValue: false,
+		type: Sequelize.ENUM("admin", "normal"),
+		defaultValue: "normal",
 		allowNull: false,
 	},
 	password: {
@@ -42,12 +42,11 @@ const User = sequelize.define("user", {
 	},
 	status: {
 		type: Sequelize.ENUM("pending", "active"),
-		default: "pending",
+		defaultValue: "pending",
 	},
 	confirmation_code: {
 		type: Sequelize.STRING(),
 		unique: true,
-		allowNull: false,
 	},
 });
 

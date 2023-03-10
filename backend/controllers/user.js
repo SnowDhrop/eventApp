@@ -4,8 +4,11 @@ import { use } from "bcrypt/promises.js";
 import jwt from "jsonwebtoken";
 import sequelize from "../src/database/connection.js";
 import { Op } from "sequelize";
+import dotenv from "dotenv";
 
 const User = sequelize.models.user;
+
+dotenv.config();
 
 export const signupCtrl = (req, res, next) => {
 	//VALIDATORS
@@ -44,6 +47,8 @@ export const signupCtrl = (req, res, next) => {
 			bcrypt
 				.hash(req.body.password, 10)
 				.then((hash) => {
+					// Create confirmation code
+					const token = jwt.sign({ email: req.body.email });
 					//          Création de l'utilisateur
 					User.create({
 						...req.body,
@@ -74,6 +79,15 @@ export const loginCtrl = (req, res, next) => {
 				return res.status(401).json({ message: "User not found" });
 			}
 
+			//	 If user haven't confirm his email
+
+			if (user.status === "pending") {
+				console.log("En attente de confirmation");
+				// res
+				// 	.status(401)
+				// 	.json({ error: "Pending account. Please verify your email" });
+			}
+
 			//          Compare passwords
 			bcrypt
 				.compare(req.body.password, user.password)
@@ -86,7 +100,7 @@ export const loginCtrl = (req, res, next) => {
 					res.status(200).json({
 						// userId: user.id_user,
 						// isAdmin: user.is_admin,
-						token: jwt.sign({ userId: user.id_user }, "A_CHANGER", {
+						token: jwt.sign({ userId: user.id_user }, process.env.JWTKEY, {
 							expiresIn: "24h",
 						}),
 					});

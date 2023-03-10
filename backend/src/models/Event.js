@@ -67,13 +67,14 @@ const Event = sequelize.define("event", {
 		allowNull: false,
 	},
 	private: {
-		type: Sequelize.BOOLEAN,
+		type: Sequelize.ENUM("private", "public"),
 		allowNull: false,
+		defaultValue: "public",
 	},
 	active: {
-		type: Sequelize.BOOLEAN,
+		type: Sequelize.ENUM("active", "inactive"),
 		allowNull: false,
-		defaultValue: 1,
+		defaultValue: "active",
 	},
 });
 
