@@ -39,8 +39,8 @@ export const getOneCtrl = (req, res, next) => {
 	})
 		.then((user) => {
 			if (user == null) {
-				throw "Event doesn't found";
-			} else if (user.active !== 1) {
+				throw "Event not found";
+			} else if (user.active !== true) {
 				throw "Event not active";
 			}
 			res.status(200).json({ user });
@@ -76,9 +76,7 @@ export const subscribeCtrl = (req, res, next) => {
 		.then((user) => {
 			// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
 			if (user.active === false || user.private === true) {
-				res.send
-					.status(404)
-					.json({ err: "This event is not active or private" });
+				res.status(404).json({ err: "This event is not active or private" });
 			}
 
 			Users_Event.create({
@@ -86,11 +84,13 @@ export const subscribeCtrl = (req, res, next) => {
 				id_event: req.params.id,
 			})
 				.then(() =>
-					res
-						.status(201)
-						.json({ message: "You have subscribe to this event" })
+					res.status(201).json({ message: "You have subscribe to this event" })
 				)
-				.catch((err) => res.status(500).json({ err: "Server error" }));
+				.catch((err) =>
+					res
+						.status(500)
+						.json({ err: "You have already subscribe to this event" })
+				);
 		})
 		.catch((err) => res.status(404).json({ err: "Event not found" }));
 
@@ -136,8 +136,6 @@ export const deleteCtrl = (req, res, next) => {
 	})
 		.then(() => res.status(200).json({ message: "Event deleted" }))
 		.catch((err) =>
-			res
-				.status(400)
-				.json({ message: "Event can't be delete ", error: err })
+			res.status(400).json({ message: "Event can't be delete ", error: err })
 		);
 };

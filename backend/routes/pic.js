@@ -6,6 +6,6 @@ import { createCtrl } from "./../controllers/pic.js";
 
 import auth from "./../middlewares/auth.js";
 
-router.post("/", auth, createCtrl);
+router.post("/", createCtrl);
 
 export default router;

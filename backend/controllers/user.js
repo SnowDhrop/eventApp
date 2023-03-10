@@ -49,9 +49,7 @@ export const signupCtrl = (req, res, next) => {
 						...req.body,
 						password: hash,
 					})
-						.then(() =>
-							res.status(201).json({ message: "User added" })
-						)
+						.then(() => res.status(201).json({ message: "User added" }))
 						.catch((err) => res.status(400).json({ err }));
 				})
 
@@ -81,9 +79,7 @@ export const loginCtrl = (req, res, next) => {
 				.compare(req.body.password, user.password)
 				.then((valid) => {
 					if (!valid) {
-						return res
-							.status(401)
-							.json({ message: "Wrong password" });
+						return res.status(401).json({ message: "Wrong password" });
 					}
 
 					//                  Token creation
@@ -170,7 +166,7 @@ export const deleteCtrl = (req, res, next) => {
 		where: { id_user: req.params.id },
 	})
 		.then(() => res.status(200).json({ message: "User deleted" }))
-		.catch((err) =>
-			res.status(400).json({ message: "User can't be delete " })
-		);
+		.catch((err) => res.status(400).json({ message: "User can't be delete " }));
 };
+
+export const addPic = (req, res, next) => {};

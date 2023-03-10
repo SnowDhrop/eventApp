@@ -5,8 +5,6 @@ const userVerif = (req, res, next) => {
 	try {
 		const User = sequelize.models.user;
 
-		console.log(req.params.id, req.auth.userId);
-
 		//      Check if user is admin
 		User.findOne({
 			where: { id_user: req.auth.userId },
@@ -14,7 +12,6 @@ const userVerif = (req, res, next) => {
 		})
 			.then((admin) => {
 				if (admin.dataValues.is_admin != true) {
-					console.log(admin.dataValues.is_admin);
 					//  Find user by id gave in params
 					User.findOne({
 						where: { id_user: req.params.id },
