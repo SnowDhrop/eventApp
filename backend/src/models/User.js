@@ -40,6 +40,15 @@ const User = sequelize.define("user", {
 		type: Sequelize.DATEONLY,
 		allowNull: false,
 	},
+	status: {
+		type: Sequelize.ENUM("pending", "active"),
+		default: "pending",
+	},
+	confirmation_code: {
+		type: Sequelize.STRING(),
+		unique: true,
+		allowNull: false,
+	},
 });
 
 export default User;
