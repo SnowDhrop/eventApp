@@ -48,11 +48,15 @@ export const signupCtrl = (req, res, next) => {
 				.hash(req.body.password, 10)
 				.then((hash) => {
 					// Create confirmation code
-					const token = jwt.sign({ email: req.body.email });
+					const token = jwt.sign(
+						{ email: req.body.email },
+						process.env.JWTKEY1
+					);
 					//          Création de l'utilisateur
 					User.create({
 						...req.body,
 						password: hash,
+						confirmation_code: token,
 					})
 						.then(() => res.status(201).json({ message: "User added" }))
 						.catch((err) => res.status(400).json({ err }));
@@ -82,7 +86,7 @@ export const loginCtrl = (req, res, next) => {
 			//	 If user haven't confirm his email
 
 			if (user.status === "pending") {
-				console.log("En attente de confirmation");
+				console.log("En attente de confirmation", user.confirmation_code);
 				// res
 				// 	.status(401)
 				// 	.json({ error: "Pending account. Please verify your email" });
@@ -100,7 +104,7 @@ export const loginCtrl = (req, res, next) => {
 					res.status(200).json({
 						// userId: user.id_user,
 						// isAdmin: user.is_admin,
-						token: jwt.sign({ userId: user.id_user }, process.env.JWTKEY, {
+						token: jwt.sign({ userId: user.id_user }, process.env.JWTKEY2, {
 							expiresIn: "24h",
 						}),
 					});

@@ -47,6 +47,7 @@ const User = sequelize.define("user", {
 	confirmation_code: {
 		type: Sequelize.STRING(),
 		unique: true,
+		allowNull: false,
 	},
 });
 

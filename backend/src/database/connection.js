@@ -19,12 +19,12 @@ const sequelize = new Sequelize(DATABASE, DBUSER, DBMDP, {
 sequelize
 	.authenticate()
 	.then(() => {
-		console.log("Be happy ! You are connected !");
+		console.log("You took the blue pill...", "Welcome to the Matrix");
 
 		sequelize
 			.sync({ force: false })
 			.then(() => {
-				console.log("Enjoy your tables bro'");
+				console.log("Phew ... That's ok, all the tables are here now 😪");
 			})
 			.catch((error) => {
 				console.error("Unable to create tables : ", error);
