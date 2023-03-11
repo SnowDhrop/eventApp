@@ -48,18 +48,24 @@ export const signupCtrl = (req, res, next) => {
 				.hash(req.body.password, 10)
 				.then((hash) => {
 					// Create confirmation code
-					const token = jwt.sign(
-						{ email: req.body.email },
-						process.env.JWTKEY1
-					);
+					const email = req.body.email;
+					const pseudo = req.body.pseudo;
+
+					const token = jwt.sign({ email: email }, process.env.JWTKEY1);
+
+					req.confirmationCode = { token, email, pseudo };
+
 					//          Création de l'utilisateur
 					User.create({
 						...req.body,
 						password: hash,
 						confirmation_code: token,
 					})
-						.then(() => res.status(201).json({ message: "User added" }))
+						.then(() => {
+							res.status(201).json({ message: "User added" });
+						})
 						.catch((err) => res.status(400).json({ err }));
+					next();
 				})
 
 				.catch((err) => res.status(500).json({ err }));

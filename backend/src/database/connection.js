@@ -19,7 +19,7 @@ const sequelize = new Sequelize(DATABASE, DBUSER, DBMDP, {
 sequelize
 	.authenticate()
 	.then(() => {
-		console.log("You took the blue pill...", "Welcome to the Matrix");
+		console.log("You took the blue pill...", "Welcome in the Matrice");
 
 		sequelize
 			.sync({ force: false })

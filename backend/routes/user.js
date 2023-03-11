@@ -16,8 +16,10 @@ import {
 	updateCtrl,
 	deleteCtrl,
 } from "./../controllers/user.js";
+
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
+import confirmationEmail from "./../middlewares/confirmationEmail.js";
 
 router.post(
 	"/signup",
@@ -25,7 +27,8 @@ router.post(
 	pseudoValidator,
 	passwordValidator,
 	birthdayValidator,
-	signupCtrl
+	signupCtrl,
+	confirmationEmail
 );
 
 router.get("/login", emailValidator, passwordValidator, loginCtrl);
