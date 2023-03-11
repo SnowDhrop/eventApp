@@ -13,7 +13,7 @@ const Pic = sequelize.define("pic", {
 		allowNull: false,
 	},
 	status: {
-		type: Sequelize.STRING(255),
+		type: Sequelize.ENUM("private", "public"),
 		allowNull: false,
 		defaultValue: "private",
 	},

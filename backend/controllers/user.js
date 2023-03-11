@@ -74,6 +74,16 @@ export const loginCtrl = (req, res, next) => {
 		return res.status(422).json({ errors: errors.array() });
 	}
 
+	//	 If user haven't confirm his email
+	const checkConfirmationEmail = () => {
+		if (user.status === "pending") {
+			console.log("En attente de confirmation", user.confirmation_code);
+			// const error = new Error("Pending account. Please verify your email");
+			// error.status = 401;
+			// throw error;
+		}
+	};
+
 	User.findOne({
 		where: { email: req.body.email },
 	})
@@ -81,15 +91,6 @@ export const loginCtrl = (req, res, next) => {
 			//          If user not found
 			if (!user) {
 				return res.status(401).json({ message: "User not found" });
-			}
-
-			//	 If user haven't confirm his email
-
-			if (user.status === "pending") {
-				console.log("En attente de confirmation", user.confirmation_code);
-				// res
-				// 	.status(401)
-				// 	.json({ error: "Pending account. Please verify your email" });
 			}
 
 			//          Compare passwords
@@ -100,6 +101,8 @@ export const loginCtrl = (req, res, next) => {
 						return res.status(401).json({ message: "Wrong password" });
 					}
 
+					checkConfirmationEmail();
+
 					//                  Token creation
 					res.status(200).json({
 						// userId: user.id_user,
@@ -109,7 +112,9 @@ export const loginCtrl = (req, res, next) => {
 						}),
 					});
 				})
-				.catch((err) => res.status(500).json({ err }));
+				.catch((err) => {
+					res.status(err.status || 500).json({ error: err.message || err });
+				});
 		})
 		.catch((err) => res.status(500).json({ err }));
 };
