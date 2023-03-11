@@ -75,7 +75,7 @@ export const loginCtrl = (req, res, next) => {
 	}
 
 	//	 If user haven't confirm his email
-	const checkConfirmationEmail = () => {
+	const checkConfirmationEmail = (user) => {
 		if (user.status === "pending") {
 			console.log("En attente de confirmation", user.confirmation_code);
 			// const error = new Error("Pending account. Please verify your email");
@@ -101,7 +101,7 @@ export const loginCtrl = (req, res, next) => {
 						return res.status(401).json({ message: "Wrong password" });
 					}
 
-					checkConfirmationEmail();
+					checkConfirmationEmail(user);
 
 					//                  Token creation
 					res.status(200).json({
