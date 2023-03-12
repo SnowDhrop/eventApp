@@ -19,7 +19,7 @@ import {
 
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
-import confirmationEmail from "./../middlewares/confirmationEmail.js";
+import * as confirmationEmail from "./../middlewares/confirmationEmail.js";
 
 router.post(
 	"/signup",
@@ -28,7 +28,7 @@ router.post(
 	passwordValidator,
 	birthdayValidator,
 	signupCtrl,
-	confirmationEmail
+	confirmationEmail.sendConfirmationEmail
 );
 
 router.get("/login", emailValidator, passwordValidator, loginCtrl);
@@ -47,5 +47,7 @@ router.put(
 );
 
 router.delete("/:id", auth, userVerif, deleteCtrl);
+
+router.get("/confirm/:code", confirmationEmail.confirmCodeCtrl);
 
 export default router;

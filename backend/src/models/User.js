@@ -22,12 +22,10 @@ const User = sequelize.define(
 		pseudo: {
 			type: Sequelize.STRING(50),
 			allowNull: false,
-			// unique: true,
 		},
 		email: {
 			type: Sequelize.STRING(255),
 			allowNull: false,
-			unique: true,
 		},
 		is_admin: {
 			type: Sequelize.ENUM("admin", "normal"),
@@ -48,7 +46,6 @@ const User = sequelize.define(
 		},
 		confirmation_code: {
 			type: Sequelize.STRING(),
-			unique: true,
 			allowNull: false,
 		},
 	},
