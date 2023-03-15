@@ -1,5 +1,4 @@
 import sequelize from "../src/database/connection.js";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import transport from "./../config/nodemailer.js";
 
