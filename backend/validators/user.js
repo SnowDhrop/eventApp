@@ -10,7 +10,7 @@ export const emailValidator = [
 
 export const pseudoValidator = [
 	check("pseudo", "Choose a pseudo")
-		.isLength({ min: 2, max: 8 })
+		.isLength({ min: 2, max: 16 })
 		.withMessage("Your pseudo must have between 2 and 8 characters")
 		.isString()
 		.withMessage("Your pseudo can't have special characters")
