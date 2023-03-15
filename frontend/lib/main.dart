@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:frontend/components/language/locale.dart';
+import 'package:frontend/home.dart';
 import 'package:frontend/pages/authentification/login.dart';
 import 'package:provider/provider.dart';
 import 'constants.dart';
