@@ -20,6 +20,7 @@ import {
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
 import * as confirmationEmail from "./../middlewares/confirmationEmail.js";
+import multer from "./../config/multer-config.js";
 
 router.post(
 	"/signup",
@@ -27,6 +28,7 @@ router.post(
 	pseudoValidator,
 	passwordValidator,
 	birthdayValidator,
+	multer,
 	signupCtrl,
 	confirmationEmail.sendConfirmationEmail
 );
