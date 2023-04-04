@@ -8,6 +8,7 @@ const User = sequelize.models.user;
 
 export const sendConfirmationEmail = (req, res, next) => {
 	// For sending an email with your computer, you have to verify my microsoft account with your computer
+
 	transport
 		.sendMail({
 			from: process.env.MAIL,
@@ -18,7 +19,7 @@ export const sendConfirmationEmail = (req, res, next) => {
 	        <p>Bonjour</p>
 	        <a href=http://localhost:3000/user/confirm/${req.confirmationCode.token} target="_blank">Confirm your email</a>`,
 		})
-		.catch((err) => console.log(err));
+		.catch((err) => console.log(err, "Erreur_mail"));
 };
 
 export const confirmCodeCtrl = (req, res, next) => {
