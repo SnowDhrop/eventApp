@@ -16,6 +16,7 @@ export const signupCtrl = (req, res, next) => {
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
+		6;
 		return res.status(422).json({ errors: errors.array() });
 	}
 
@@ -23,7 +24,7 @@ export const signupCtrl = (req, res, next) => {
 
 	User.findOne({
 		where: {
-			// Recherche par email ou pseudo
+			// Search by user or pseudo
 			[Op.or]: [
 				{
 					email: req.body.email,
@@ -88,9 +89,9 @@ export const loginCtrl = (req, res, next) => {
 	const checkConfirmationEmail = (user) => {
 		if (user.status === "pending") {
 			console.log("En attente de confirmation", user.confirmation_code);
-			// const error = new Error("Pending account. Please verify your email");
-			// error.status = 401;
-			// throw error;
+			const error = new Error("Pending account. Please verify your email");
+			error.status = 401;
+			throw error;
 		}
 	};
 
