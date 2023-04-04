@@ -7,8 +7,6 @@ dotenv.config();
 const User = sequelize.models.user;
 
 export const sendConfirmationEmail = (req, res, next) => {
-	const code = req.confirmationCode.token;
-
 	// For sending an email with your computer, you have to verify my microsoft account with your computer
 	transport
 		.sendMail({
