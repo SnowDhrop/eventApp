@@ -14,9 +14,9 @@ export const sendConfirmationEmail = (req, res, next) => {
 			from: process.env.MAIL,
 			to: req.confirmationCode.email,
 			subject: "Confirmez votre compte --- NE PAS REPONDRE",
-			html: ` <h1>Bonjour, veuillez confirmer votre compte</h1>
-	        <h2>Hello ${req.confirmationCode.pseudo}</h2>
-	        <p>Bonjour</p>
+			html: ` <h1>Veuillez confirmer votre compte</h1>
+	        <h2>Bienvenue chez Maestrip</h2>
+	        <p>Bonjour ${req.confirmationCode.pseudo}, veuillez confirmer votre compte en cliquant sur le lien ci-dessous</p>
 	        <a href=http://localhost:3000/user/confirm/${req.confirmationCode.token} target="_blank">Confirm your email</a>`,
 		})
 		.catch((err) => console.log(err, "Erreur_mail"));
