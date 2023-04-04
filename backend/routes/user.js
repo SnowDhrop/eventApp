@@ -1,23 +1,9 @@
 import express from "express";
 const router = express.Router();
 
-import {
-	emailValidator,
-	pseudoValidator,
-	passwordValidator,
-	birthdayValidator,
-} from "./../validators/user.js";
+import * as userValidators from "./../validators/user.js";
 
-import {
-	signupCtrl,
-	loginCtrl,
-	getOneCtrl,
-	getAllCtrl,
-	updateCtrl,
-	deleteCtrl,
-	addPic,
-	changePass,
-} from "./../controllers/user.js";
+import * as userControllers from "./../controllers/user.js";
 
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
@@ -27,38 +13,43 @@ import * as changePassMiddleware from "./../middlewares/changePass.js";
 
 router.post(
 	"/signup",
-	emailValidator,
-	pseudoValidator,
-	passwordValidator,
-	birthdayValidator,
-	signupCtrl,
+	userValidators.emailValidator,
+	userValidators.pseudoValidator,
+	userValidators.passwordValidator,
+	userValidators.birthdayValidator,
+	userControllers.signupCtrl,
 	confirmationEmail.sendConfirmationEmail
 );
 
-router.get("/login", emailValidator, passwordValidator, loginCtrl);
+router.get(
+	"/login",
+	userValidators.emailValidator,
+	userValidators.passwordValidator,
+	userControllers.loginCtrl
+);
 
-router.get("/search", auth, getAllCtrl);
-router.get("/search/:param", auth, getOneCtrl);
+router.get("/search", auth, userControllers.getAllCtrl);
+router.get("/search/:param", auth, userControllers.getOneCtrl);
 
 router.put(
 	"/:id",
 	auth,
 	userVerif,
-	emailValidator,
-	pseudoValidator,
-	passwordValidator,
-	updateCtrl
+	userValidators.emailValidator,
+	userValidators.pseudoValidator,
+	userValidators.passwordValidator,
+	userControllers.updateCtrl
 );
 
-// router.post("/pic", multer, addPic);
+// router.post("/pic", multer, userControllers.addPic);
 
-router.delete("/:id", auth, userVerif, deleteCtrl);
+router.delete("/:id", auth, userVerif, userControllers.deleteCtrl);
 
 router.get("/confirm/:code", confirmationEmail.confirmCodeCtrl);
 
 router.post(
 	"/changePassword",
-	changePass,
+	userControllers.changePass,
 	changePassMiddleware.sendPasswordCode
 );
 

@@ -57,6 +57,7 @@ const User = sequelize.define(
 			{ unique: true, fields: ["pseudo"] },
 			{ unique: true, fields: ["email"] },
 			{ unique: true, fields: ["confirmation_code"] },
+			{ unique: true, fields: ["password_code"] },
 		],
 	}
 );
