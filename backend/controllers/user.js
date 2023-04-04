@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import sequelize from "../src/database/connection.js";
 import { Op } from "sequelize";
 import dotenv from "dotenv";
+import transport from "./../config/nodemailer.js";
 
 const User = sequelize.models.user;
 
@@ -211,4 +212,63 @@ export const deleteCtrl = (req, res, next) => {
 		);
 };
 
-export const addPic = (req, res, next) => {};
+export const addPic = (req, res, next) => {
+	console.log(req.body.file);
+};
+
+export const changePass = (req, res, next) => {
+	const token = jwt.sign({ email: req.body.email }, process.env.JWTKEY1);
+	User.findOne({
+		where: {
+			// Recherche par email ou pseudo
+			[Op.or]: [
+				{
+					email: req.body.email,
+				},
+				{
+					pseudo: req.body.pseudo,
+				},
+			],
+		},
+	})
+		.then((user) => {
+			if (user) {
+				User.update(
+					{ password_code: token },
+					{
+						where: {
+							// Recherche par email ou pseudo
+							[Op.or]: [
+								{
+									email: req.body.email,
+								},
+								{
+									pseudo: req.body.pseudo,
+								},
+							],
+						},
+					}
+				)
+					.then(() => {
+						res.status(200).json({
+							message: "Password Code added",
+						});
+						next();
+					})
+					.catch((err) => res.status(500).json({ err }));
+			}
+		})
+		.catch((err) => res.status(404).json({ error: "yolo" }));
+
+	// transport
+	// 	.sendMail({
+	// 		from: process.env.MAIL,
+	// 		to: req.body.email,
+	// 		subject: "Please confirm your account",
+	// 		html: ` <h1>Email confirmation</h1>
+	//         <h2>Hello ${req.body.email}</h2>
+	//         <p>Bien joué frère 😉 BOUYAAAAAAAAA</p>
+	//         <a href=http://localhost:3000/user/confirm/${test} target="_blank">Confirm your email</a>`,
+	// 	})
+	// 	.catch((err) => console.log(err));
+};

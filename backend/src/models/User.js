@@ -48,6 +48,9 @@ const User = sequelize.define(
 			type: Sequelize.STRING(),
 			allowNull: false,
 		},
+		password_code: {
+			type: Sequelize.STRING(),
+		},
 	},
 	{
 		indexes: [

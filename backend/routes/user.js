@@ -15,12 +15,15 @@ import {
 	getAllCtrl,
 	updateCtrl,
 	deleteCtrl,
+	addPic,
+	changePass,
 } from "./../controllers/user.js";
 
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
 import * as confirmationEmail from "./../middlewares/confirmationEmail.js";
-import multer from "./../config/multer-config.js";
+import * as changePassMiddleware from "./../middlewares/changePass.js";
+// import multer from "./../config/multer-config.js";
 
 router.post(
 	"/signup",
@@ -28,7 +31,6 @@ router.post(
 	pseudoValidator,
 	passwordValidator,
 	birthdayValidator,
-	multer,
 	signupCtrl,
 	confirmationEmail.sendConfirmationEmail
 );
@@ -48,8 +50,16 @@ router.put(
 	updateCtrl
 );
 
+// router.post("/pic", multer, addPic);
+
 router.delete("/:id", auth, userVerif, deleteCtrl);
 
 router.get("/confirm/:code", confirmationEmail.confirmCodeCtrl);
+
+router.post(
+	"/changePassword",
+	changePass,
+	changePassMiddleware.sendPasswordCode
+);
 
 export default router;

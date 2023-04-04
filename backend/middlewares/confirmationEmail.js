@@ -7,8 +7,6 @@ dotenv.config();
 const User = sequelize.models.user;
 
 export const sendConfirmationEmail = (req, res, next) => {
-	const code = req.confirmationCode.token;
-
 	transport
 		.sendMail({
 			from: process.env.MAIL,
