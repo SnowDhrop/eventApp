@@ -89,7 +89,9 @@ export const loginCtrl = (req, res, next) => {
 	const checkConfirmationEmail = (user) => {
 		if (user.status === "pending") {
 			console.log("En attente de confirmation", user.confirmation_code);
-			const error = new Error("Pending account. Please verify your email");
+			const error = new Error(
+				"Pending account. Please verify your email"
+			);
 			error.status = 401;
 			throw error;
 		}
@@ -180,27 +182,29 @@ export const updateCtrl = (req, res, next) => {
 
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ errors: errors.array() });
+	} else {
+		bcrypt
+			.hash(req.body.password, 10)
+			.then((hash) => {
+				//          Création de l'utilisateur
+				User.update(
+					{
+						pseudo: req.body.pseudo,
+						email: req.body.email,
+						password: hash,
+					},
+					{
+						where: { id_user: req.params.id },
+					}
+				)
+					.then(() =>
+						res.status(201).json({ message: "User updated" })
+					)
+					.catch((err) => res.status(400).json({ err }));
+			})
+
+			.catch((err) => res.status(500).json({ err }));
 	}
-
-	bcrypt
-		.hash(req.body.password, 10)
-		.then((hash) => {
-			//          Création de l'utilisateur
-			User.update(
-				{
-					pseudo: req.body.pseudo,
-					email: req.body.email,
-					password: hash,
-				},
-				{
-					where: { id_user: req.params.id },
-				}
-			)
-				.then(() => res.status(201).json({ message: "User updated" }))
-				.catch((err) => res.status(400).json({ err }));
-		})
-
-		.catch((err) => res.status(500).json({ err }));
 };
 
 export const deleteCtrl = (req, res, next) => {
@@ -217,59 +221,22 @@ export const addPic = (req, res, next) => {
 	console.log(req.body.file);
 };
 
-export const changePass = (req, res, next) => {
-	const token = jwt.sign({ email: req.body.email }, process.env.JWTKEY1);
-	User.findOne({
-		where: {
-			// Recherche par email ou pseudo
-			[Op.or]: [
-				{
-					email: req.body.email,
-				},
-				{
-					pseudo: req.body.pseudo,
-				},
-			],
-		},
-	})
-		.then((user) => {
-			if (user) {
-				User.update(
-					{ password_code: token },
-					{
-						where: {
-							// Recherche par email ou pseudo
-							[Op.or]: [
-								{
-									email: req.body.email,
-								},
-								{
-									pseudo: req.body.pseudo,
-								},
-							],
-						},
-					}
-				)
-					.then(() => {
-						res.status(200).json({
-							message: "Password Code added",
-						});
-						next();
-					})
-					.catch((err) => res.status(500).json({ err }));
-			}
-		})
-		.catch((err) => res.status(404).json({ error: "yolo" }));
+export const changePassRequest = (req, res, next) => {
+	const token = jwt.sign({ email: req.user.email }, process.env.JWTKEY1);
 
-	// transport
-	// 	.sendMail({
-	// 		from: process.env.MAIL,
-	// 		to: req.body.email,
-	// 		subject: "Please confirm your account",
-	// 		html: ` <h1>Email confirmation</h1>
-	//         <h2>Hello ${req.body.email}</h2>
-	//         <p>Bien joué frère 😉 BOUYAAAAAAAAA</p>
-	//         <a href=http://localhost:3000/user/confirm/${test} target="_blank">Confirm your email</a>`,
-	// 	})
-	// 	.catch((err) => console.log(err));
+	User.update(
+		{ password_code: token },
+		{
+			where: { email: req.user.email },
+		}
+	)
+		.then(() => {
+			req.changePass = { token };
+
+			res.status(200).json({
+				message: "Password Code added",
+			});
+			next();
+		})
+		.catch((err) => res.status(500).json({ err }));
 };

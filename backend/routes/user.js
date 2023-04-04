@@ -8,7 +8,7 @@ import * as userControllers from "./../controllers/user.js";
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
 import * as confirmationEmail from "./../middlewares/confirmationEmail.js";
-import * as changePassMiddleware from "./../middlewares/changePass.js";
+import checkAccountValidity from "./../middlewares/checkAccountValidity.js";
 // import multer from "./../config/multer-config.js";
 
 router.post(
@@ -47,10 +47,17 @@ router.delete("/:id", auth, userVerif, userControllers.deleteCtrl);
 
 router.get("/confirm/:code", confirmationEmail.confirmCodeCtrl);
 
+// CHANGE PASSWORD
+// Rajouter les validateurs pseudo et email
 router.post(
 	"/changePassword",
-	userControllers.changePass,
-	changePassMiddleware.sendPasswordCode
+	checkAccountValidity,
+	userControllers.changePassRequest,
+	confirmationEmail.sendCodeChangePassword
 );
+
+router.get("/change/:code", confirmationEmail.confirmCodeCtrl);
+
+// END CHANGE PASSWORD
 
 export default router;

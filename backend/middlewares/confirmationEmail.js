@@ -41,3 +41,23 @@ export const confirmCodeCtrl = (req, res, next) => {
 			.catch((err) => res.status(404).json({ error: "User not found" }));
 	}
 };
+
+export const sendCodeChangePassword = (req, res, next) => {
+	console.log(req.changePass.token);
+
+	transport
+		.sendMail({
+			from: process.env.MAIL,
+			to: req.user.email,
+			subject: "Mot de passe oublié",
+			html: ` <h1>VChangez votre mot de passe</h1>
+	        <p>Bonjour ${req.changePass.token}, pour changer votre mot de passe, veuillez cliquer sur le lien suivant:</p>
+	        <a href=http://localhost:3000/user/confirm/${req.changePass.token} target="_blank">Confirm your email</a>`,
+		})
+		.catch((err) => console.log(err, "Erreur envois du mail"));
+};
+
+export const changePassword = (req, res, next) => {
+	// Renvois sur une page où je récupère le pseudo de l'utilisateur grâce au code de confirmation et l'affiche
+	// Puis j'utilise update de userController en lui passant le pseudo et l'email de l'utilisateur
+};
