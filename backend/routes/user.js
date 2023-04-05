@@ -56,7 +56,7 @@ router.post(
 	confirmationEmail.sendCodeChangePassword
 );
 
-router.get("/change/:code", confirmationEmail.confirmCodeCtrl);
+router.get("/change/:code", confirmationEmail.changePassword);
 
 // END CHANGE PASSWORD
 

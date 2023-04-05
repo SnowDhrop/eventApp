@@ -58,6 +58,31 @@ export const sendCodeChangePassword = (req, res, next) => {
 };
 
 export const changePassword = (req, res, next) => {
-	// Renvois sur une page où je récupère le pseudo de l'utilisateur grâce au code de confirmation et l'affiche
-	// Puis j'utilise update de userController en lui passant le pseudo et l'email de l'utilisateur
+	//Send to a page who find the user and provide him his pseudo and email
+	User.findOne({
+		where: { password_code: req.params.code },
+		attributes: ["pseudo", "email"],
+	})
+		.then((user) => {
+			if (user == null) {
+				throw "User doesn't found";
+			}
+
+			User.update(
+				{ password_code: null },
+				{
+					where: { password_code: req.params.code },
+				}
+			)
+				.then(() => {
+					res.status(200).json({
+						message: "Password Code deleted",
+						user,
+					});
+				})
+				.catch((err) => res.status(500).json({ err }));
+		})
+		.catch((err) => res.status(400).json({ err }));
+
+	//When he validate his new password, do a post with his pseudo, email and new pass to the same road of updateUserController
 };

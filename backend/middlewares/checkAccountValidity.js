@@ -27,7 +27,7 @@ const checkAccountValidity = (req, res, next) => {
 						error: "You have to confirm your account before",
 					});
 				} else {
-					let email = user.email;
+					const email = user.email;
 					req.user = { email };
 
 					next();
