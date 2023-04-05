@@ -3,7 +3,8 @@ import 'package:frontend/components/language/locale.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constants.dart';
+import 'package:frontend/constants/color.dart';
+import 'package:frontend/constants/text.dart';
 
 class Settings extends StatefulWidget {
   final BuildContext context;
@@ -42,18 +43,18 @@ class SettingsState extends State<Settings> {
                         width: double.infinity,
                         height: 50,
                         child: TextButton(
-                          style: style,
+                          //style: style,
                           onPressed: () {},
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const <Widget>[
-                              TextSection(
+                              H1Text(
                                 text: 'Button',
                               ),
                               Icon(
                                 Icons.chevron_right_rounded,
                                 size: 24,
-                                color: Constants.primaryWhite,
+                                color: ConstantsColors.primaryText,
                               ),
                             ],
                           ),
@@ -63,7 +64,7 @@ class SettingsState extends State<Settings> {
                   ),
                   const Divider(
                     thickness: 2,
-                    color: Constants.primaryDarkColor,
+                    color: ConstantsColors.primaryText,
                   ),
                 ],
               ),

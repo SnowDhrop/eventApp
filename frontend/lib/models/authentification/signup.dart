@@ -16,12 +16,14 @@ class SignupRequestModel {
   String pseudo;
   String email;
   String password;
+  String confirmPassword;
   String birthday;
 
   SignupRequestModel({
     required this.pseudo,
     required this.email,
     required this.password,
+    required this.confirmPassword,
     required this.birthday,
   });
 
@@ -30,6 +32,7 @@ class SignupRequestModel {
       'pseudo': pseudo.trim(),
       'email': email.trim(),
       'password': password.trim(),
+      'confirmPassword': confirmPassword.trim(),
       'birthday': birthday.trim(),
     };
 

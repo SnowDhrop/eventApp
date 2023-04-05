@@ -3,7 +3,8 @@ import 'package:frontend/components/language/locale.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
-import '../../../constants.dart';
+import 'package:frontend/constants/color.dart';
+import 'package:frontend/constants/text.dart';
 
 class Language extends StatefulWidget {
   final BuildContext context;
@@ -42,7 +43,7 @@ class LanguageState extends State<Language> {
                         width: double.infinity,
                         height: 50,
                         child: TextButton(
-                          style: style,
+                          //style: style,
                           onPressed: () {
                             Provider.of<LocaleModel>(context, listen: false)
                                 .setLocale(const Locale('fr'));
@@ -50,14 +51,14 @@ class LanguageState extends State<Language> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const <Widget>[
-                              TextSection(
+                              PText(
                                 text: 'Français',
                               ),
                               Icon(
                                 Icons.chevron_right_rounded,
                                 size: 24,
-                                color: Constants.primaryWhite,
-                              ),
+                                color: ConstantsColors.primaryText,
+                              )
                             ],
                           ),
                         ),
@@ -66,7 +67,7 @@ class LanguageState extends State<Language> {
                   ),
                   const Divider(
                     thickness: 2,
-                    color: Constants.primaryDarkColor,
+                    color: ConstantsColors.primaryText,
                   ),
                   Consumer<LocaleModel>(
                     builder: (context, localeModel, child) => Builder(
@@ -74,7 +75,7 @@ class LanguageState extends State<Language> {
                         width: double.infinity,
                         height: 50,
                         child: TextButton(
-                          style: style,
+                          //style: style,
                           onPressed: () {
                             Provider.of<LocaleModel>(context, listen: false)
                                 .setLocale(const Locale('en'));
@@ -82,13 +83,13 @@ class LanguageState extends State<Language> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const <Widget>[
-                              TextSection(
+                              PText(
                                 text: 'English',
                               ),
                               Icon(
                                 Icons.chevron_right_rounded,
                                 size: 24,
-                                color: Constants.primaryWhite,
+                                color: ConstantsColors.primaryText,
                               ),
                             ],
                           ),
@@ -98,7 +99,7 @@ class LanguageState extends State<Language> {
                   ),
                   const Divider(
                     thickness: 2,
-                    color: Constants.primaryDarkColor,
+                    color: ConstantsColors.primaryText,
                   ),
                 ],
               ),

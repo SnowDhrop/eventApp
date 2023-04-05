@@ -25,24 +25,12 @@ class RiveAsset {
   }
 }
 
-List<RiveAsset> bottomNavs = [
+List<RiveAsset> bottomNavAssets = [
   RiveAsset(
     "assets/rive_icons/bottomappbar.riv",
     artboard: "HOME",
     stateMachineName: "HOME_interactivity",
     title: "Home",
-  ),
-  RiveAsset(
-    "assets/rive_icons/bottomappbar.riv",
-    artboard: "SEARCH",
-    stateMachineName: "SEARCH_Interactivity",
-    title: "Search",
-  ),
-  RiveAsset(
-    "assets/rive_icons/bottomappbar.riv",
-    artboard: "BELL",
-    stateMachineName: "BELL_Interactivity",
-    title: "Bell",
   ),
   RiveAsset(
     "assets/rive_icons/bottomappbar.riv",
