@@ -9,7 +9,7 @@ import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
 import * as confirmationEmail from "./../middlewares/confirmationEmail.js";
 import checkAccountValidity from "./../middlewares/checkAccountValidity.js";
-// import multer from "./../config/multer-config.js";
+import multer from "./../config/multer-config.js";
 
 router.post(
 	"/signup",
@@ -47,7 +47,9 @@ router.put(
 	userControllers.updateCtrl
 );
 
+// ADD PROFILE PICTURE
 // router.post("/pic", multer, userControllers.addPic);
+//
 
 router.delete(
 	"/:id",
@@ -69,7 +71,6 @@ router.post(
 );
 
 router.get("/change/:code", confirmationEmail.changePassword);
-
 // END CHANGE PASSWORD
 
 export default router;

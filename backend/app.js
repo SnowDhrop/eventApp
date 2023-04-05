@@ -32,10 +32,11 @@ app.use("/user", userRoutes);
 
 app.use("/event", eventRoutes);
 
-app.use("/pic", picRoutes);
-
 app.use("/style", styleRoutes);
 
 app.use("/category", categoryRoutes);
+
+// app.use("/pics", express.static(path.join(__dirname, "images")));
+app.use("/pic", picRoutes);
 
 export default app;
