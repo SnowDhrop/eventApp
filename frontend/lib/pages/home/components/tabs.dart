@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/constants.dart';
+import 'package:frontend/constants/color.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:frontend/pages/account/language/language.dart';
+import 'package:frontend/constants/text.dart';
+import 'package:frontend/pages/home/language/language.dart';
 
 class Tabs extends StatelessWidget {
   final String text;
@@ -20,20 +21,20 @@ class Tabs extends StatelessWidget {
       width: double.infinity,
       height: 50,
       child: TextButton(
-        style: style,
+        //style: style,
         onPressed: () {
           route;
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            TextSection(
+            H1Text(
               text: text,
             ),
             const Icon(
               Icons.chevron_right_rounded,
               size: 24,
-              color: Constants.primaryWhite,
+              color: ConstantsColors.primaryText,
             )
           ],
         ),
