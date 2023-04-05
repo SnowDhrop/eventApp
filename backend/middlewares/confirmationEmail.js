@@ -43,8 +43,6 @@ export const confirmCodeCtrl = (req, res, next) => {
 };
 
 export const sendCodeChangePassword = (req, res, next) => {
-	console.log(req.changePass.token);
-
 	transport
 		.sendMail({
 			from: process.env.MAIL,

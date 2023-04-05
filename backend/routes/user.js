@@ -23,13 +23,19 @@ router.post(
 
 router.get(
 	"/login",
+	checkAccountValidity,
 	userValidators.emailValidator,
 	userValidators.passwordValidator,
 	userControllers.loginCtrl
 );
 
-router.get("/search", auth, userControllers.getAllCtrl);
-router.get("/search/:param", auth, userControllers.getOneCtrl);
+router.get("/search", auth, checkAccountValidity, userControllers.getAllCtrl);
+router.get(
+	"/search/:param",
+	auth,
+	checkAccountValidity,
+	userControllers.getOneCtrl
+);
 
 router.put(
 	"/:id",
@@ -43,7 +49,13 @@ router.put(
 
 // router.post("/pic", multer, userControllers.addPic);
 
-router.delete("/:id", auth, userVerif, userControllers.deleteCtrl);
+router.delete(
+	"/:id",
+	auth,
+	checkAccountValidity,
+	userVerif,
+	userControllers.deleteCtrl
+);
 
 router.get("/confirm/:code", confirmationEmail.confirmCodeCtrl);
 
