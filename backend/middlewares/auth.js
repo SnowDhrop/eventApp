@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const auth = (req, res, next) => {
 	try {
 		const token = req.headers.authorization.split(" ")[1];
-		const decodedToken = jwt.verify(token, "A_CHANGER");
+
+		const decodedToken = jwt.verify(token, process.env.JWTKEY2);
+
 		const userId = decodedToken.userId;
 
 		req.auth = { userId };

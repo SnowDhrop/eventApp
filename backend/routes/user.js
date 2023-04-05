@@ -23,7 +23,6 @@ router.post(
 
 router.get(
 	"/login",
-	checkAccountValidity,
 	userValidators.emailValidator,
 	userValidators.passwordValidator,
 	userControllers.loginCtrl

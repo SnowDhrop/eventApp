@@ -4,20 +4,8 @@ import { Op } from "sequelize";
 const User = sequelize.models.user;
 
 const checkAccountValidity = (req, res, next) => {
-	console.log("YOLO");
-
 	User.findOne({
-		where: {
-			// Recherche par email ou pseudo
-			[Op.or]: [
-				{
-					email: req.body.email,
-				},
-				{
-					pseudo: req.body.pseudo,
-				},
-			],
-		},
+		where: { id_user: req.auth.userId },
 		attributes: ["status", "email"],
 	})
 		.then((user) => {
@@ -37,12 +25,10 @@ const checkAccountValidity = (req, res, next) => {
 			}
 		})
 		.catch((err) =>
-			res
-				.status(404)
-				.json({
-					error: err,
-					message: "Error while checking your account validity",
-				})
+			res.status(404).json({
+				error: err,
+				message: "Error while checking your account validity",
+			})
 		);
 };
 

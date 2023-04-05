@@ -11,6 +11,12 @@ const User = sequelize.models.user;
 
 dotenv.config();
 
+// - likes (en + de subscribe)
+// - get My Events
+// - associer artistes et genrs préférés à l'utilisateur
+// - pouvooir les modifier
+// - script pour récup events et les stocker
+
 export const signupCtrl = (req, res, next) => {
 	//VALIDATORS
 	const errors = validationResult(req);
