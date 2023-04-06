@@ -1,8 +1,11 @@
 import sequelize from "../src/database/connection.js";
+import fs from "fs";
+import path from "path";
 
 import multer from "./../config/multer-config.js";
 
 const Pic = sequelize.models.pic;
+const User = sequelize.models.user;
 
 // export const createCtrl = (req, res, next) => {
 // 	Pic.create({
@@ -14,45 +17,68 @@ const Pic = sequelize.models.pic;
 // 		);
 // };
 
-export const upload = (req, res, next) => {
+export const uploadProf = (req, res, next) => {
 	multer(req, res, (err) => {
 		if (err) {
-			return res.status(500).send({ error: err });
+			return res.status(500).send({ err });
 		}
 
-		console.log("YALA");
-
-		// Récupérez l'identifiant de l'utilisateur connecté
-		const userId = req.auth.userId;
-
-		// Créez un dossier pour l'utilisateur s'il n'existe pas déjà
-		const userFolder = `./../public/images/user/${userId}`;
-
-		if (!fs.existsSync(userFolder)) {
-			fs.mkdirSync(userFolder, { recursive: true });
-		}
-
-		console.log("YOLO");
-
-		// Déplacez le fichier dans le dossier de l'utilisateur
-		fs.rename(
-			`./../public/images/user/${req.file.filename}`,
-			`${userFolder}/profil/${req.file.filename}`,
-			(err) => {
-				if (err) {
-					return res
-						.status(500)
-						.send({ message: "Error moving file to user folder" });
+		const updateDB = () => {
+			User.update(
+				{
+					default_pic: false,
+				},
+				{
+					where: { id_user: req.auth.userId },
 				}
+			)
+				.then(() => {
+					res.status(200).send({
+						message: "File uploaded successfully",
+						filename: req.file.filename,
+					});
+				})
+				.catch((err) => res.status(400).json({ err }));
+		};
 
-				// Mettez à jour la base de données avec le chemin du fichier, par exemple :
-				// updateUserProfile(userId, `${userFolder}/${req.file.filename}`);
-
-				res.status(200).send({
-					message: "File uploaded successfully",
-					filename: req.file.filename,
-				});
-			}
-		);
+		updateDB();
 	});
+};
+
+export const getProf = (req, res, next) => {
+	const userId = req.auth.userId;
+
+	const getProfilPic = (userFolder, boolean) => {
+		fs.readdir(userFolder, (err, files) => {
+			if (err) throw err;
+
+			fs.access(userFolder, fs.constants.F_OK, (err) => {
+				if (err) {
+					res.status(404).json({ error: "Profile image not found" });
+				} else {
+					let imageSended = null;
+
+					if (boolean === true) {
+						files.map((image) => {
+							if (image.includes("profil")) {
+								imageSended = image;
+							}
+						});
+					} else {
+						imageSended = files[0];
+					}
+
+					const image = path.join(userFolder, imageSended);
+
+					res.sendFile(path.resolve(image));
+				}
+			});
+		});
+	};
+
+	if (fs.existsSync(`./public/images/user${userId}/`)) {
+		getProfilPic(`./public/images/user${userId}/`, true);
+	} else {
+		getProfilPic(`./public/images/default/`, false);
+	}
 };

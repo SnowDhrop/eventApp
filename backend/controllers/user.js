@@ -172,12 +172,23 @@ export const getOneCtrl = (req, res, next) => {
 
 export const getAllCtrl = (req, res, next) => {
 	User.findAll({
-		attributes: ["pseudo"],
+		attributes: [
+			"id_user",
+			"pseudo",
+			"birthday",
+			"createdAt",
+			"default_pic",
+		],
 	})
 		.then((user) => {
 			if (user == null) {
-				throw "Database empty";
+				throw "Server error";
 			}
+
+			if (user.default_pic === true) {
+			}
+
+			console.log(user);
 			res.status(200).json({ user });
 		})
 		.catch((err) => res.status(400).json({ err }));
@@ -200,7 +211,7 @@ export const updateCtrl = (req, res, next) => {
 						password: hash,
 					},
 					{
-						where: { id_user: req.params.id },
+						where: { id_user: req.auth.userId },
 					}
 				)
 					.then(() =>
