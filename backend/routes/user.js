@@ -9,6 +9,7 @@ import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
 import * as confirmationEmail from "./../middlewares/confirmationEmail.js";
 import checkAccountValidity from "./../middlewares/checkAccountValidity.js";
+import getProf from "./../middlewares/getProfilePic.js";
 import multer from "./../config/multer-config.js";
 
 router.post(
@@ -28,12 +29,20 @@ router.get(
 	userControllers.loginCtrl
 );
 
-router.get("/search", auth, checkAccountValidity, userControllers.getAllCtrl);
+router.get(
+	"/search",
+	auth,
+	checkAccountValidity,
+	userControllers.getAllCtrl,
+	getProf
+);
+
 router.get(
 	"/search/:param",
 	auth,
 	checkAccountValidity,
-	userControllers.getOneCtrl
+	userControllers.getOneCtrl,
+	getProf
 );
 
 router.put(

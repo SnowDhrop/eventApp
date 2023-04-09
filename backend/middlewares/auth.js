@@ -10,7 +10,7 @@ const auth = (req, res, next) => {
 
 		const userId = decodedToken.userId;
 
-		req.auth = { userId };
+		req.auth = { userId, token };
 
 		//Compare l'id envoyé dans le body et celui enregistré dans le token et l'enregistre dans req.auth
 		if (req.body.userId && req.body.userId !== userId) {

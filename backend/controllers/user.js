@@ -161,35 +161,30 @@ export const getOneCtrl = (req, res, next) => {
 		where: whereClause,
 		attributes: ["pseudo", "email", "birthday", "createdAt", "updatedAt"],
 	})
-		.then((user) => {
-			if (user == null) {
-				throw "User doesn't found";
+		.then((users) => {
+			if (users == null) {
+				throw "User not found";
 			}
-			res.status(200).json({ user });
+
+			req.users = { users };
+
+			next();
+			// res.status(200).json({ user });
 		})
 		.catch((err) => res.status(400).json({ err }));
 };
 
 export const getAllCtrl = (req, res, next) => {
 	User.findAll({
-		attributes: [
-			"id_user",
-			"pseudo",
-			"birthday",
-			"createdAt",
-			"default_pic",
-		],
+		attributes: ["id_user", "pseudo", "birthday", "createdAt"],
 	})
-		.then((user) => {
-			if (user == null) {
+		.then((users) => {
+			if (users == null) {
 				throw "Server error";
 			}
 
-			if (user.default_pic === true) {
-			}
-
-			console.log(user);
-			res.status(200).json({ user });
+			req.users = { users };
+			next();
 		})
 		.catch((err) => res.status(400).json({ err }));
 };
