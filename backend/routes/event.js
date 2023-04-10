@@ -54,4 +54,6 @@ router.delete("/:id", auth, eventVerif, event.deleteCtrl);
 
 router.get("/:id", auth, event.subscribeCtrl);
 
+router.get("/favorites/:id", auth, event.favoritesCtrl);
+
 export default router;

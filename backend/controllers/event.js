@@ -6,6 +6,7 @@ import sequelize from "../src/database/connection.js";
 
 const Event = sequelize.models.event;
 const Subscribe = sequelize.models.subscribe;
+const Favorites = sequelize.models.favorites;
 
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
@@ -77,9 +78,9 @@ export const subscribeCtrl = (req, res, next) => {
 	})
 		.then((user) => {
 			// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
-			if (user.active === "inactive" || user.private === true) {
+			if (user.active === "inactive" || user.private === "private") {
 				res.status(404).json({
-					err: "This event is not active or private",
+					err: "This event is private or not active",
 				});
 			}
 
@@ -103,6 +104,63 @@ export const subscribeCtrl = (req, res, next) => {
 	// Je fais une requête pour vérifier que l'event est public et non complet en récupérant l'id de l'event dans l'url
 
 	// Je crée une entrée dans la table de jointure subscribe avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
+};
+
+export const favoritesCtrl = (req, res, next) => {
+	// if the event is found with id_event and user_id, delete it
+	Favorites.destroy({
+		where: { id_event: req.params.id, id_user: req.auth.userId },
+	})
+		.then((deletion) => {
+			if (deletion === 1) {
+				return res.status(200).json({
+					message: "This event is not in your favorites anymore",
+				});
+			}
+
+			// Verify if the event exist and if he's inactive or private, send a 401 message, otherwise create a relation
+			Event.findOne({
+				where: { id_event: req.params.id },
+				attributes: ["active", "private"],
+			})
+				.then((event) => {
+					if (
+						event.active === "inactive" ||
+						event.private === "private"
+					) {
+						res.status(401).json({
+							message: "This event is private or inactive",
+						});
+					}
+
+					Favorites.create({
+						id_user: req.auth.userId,
+						id_event: req.params.id,
+					})
+						.then(() =>
+							res.status(201).json({
+								message:
+									"You added this event to your favorites",
+							})
+						)
+						.catch((err) =>
+							res
+								.status(500)
+								.json({ message: "Server error", error: err })
+						);
+				})
+				.catch((err) =>
+					res
+						.status(404)
+						.json({ message: "Event not found", error: err })
+				);
+		})
+		.catch((err) =>
+			res.status(500).json({
+				message: "Deletion of the event don't works",
+				error: err,
+			})
+		);
 };
 
 export const updateCtrl = (req, res, next) => {

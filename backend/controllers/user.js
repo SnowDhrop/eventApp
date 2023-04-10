@@ -229,10 +229,6 @@ export const deleteCtrl = (req, res, next) => {
 		);
 };
 
-export const addPic = (req, res, next) => {
-	console.log(req.body.file);
-};
-
 export const changePassRequest = (req, res, next) => {
 	const token = jwt.sign({ email: req.user.email }, process.env.JWTKEY1);
 

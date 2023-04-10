@@ -55,10 +55,6 @@ router.put(
 	userControllers.updateCtrl
 );
 
-// ADD PROFILE PICTURE
-// router.post("/pic", multer, userControllers.addPic);
-//
-
 router.delete(
 	"/:id",
 	auth,

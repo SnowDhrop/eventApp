@@ -11,6 +11,7 @@ import Social from "./Social.js";
 import Style from "./Style.js";
 import Subscribe from "./Subscribe.js";
 import Users_Challenge from "./Users_Challenge.js";
+import Favorites from "./Favorites.js";
 
 // DEFINE FOREIGN KEYS
 //Subscribe
@@ -21,6 +22,18 @@ User.belongsToMany(Event, {
 });
 Event.belongsToMany(User, {
 	through: Subscribe,
+	foreignKey: "id_event",
+	unique: false,
+});
+
+//Favorites
+User.belongsToMany(Event, {
+	through: Favorites,
+	foreignKey: "id_user",
+	unique: false,
+});
+Event.belongsToMany(User, {
+	through: Favorites,
 	foreignKey: "id_event",
 	unique: false,
 });
