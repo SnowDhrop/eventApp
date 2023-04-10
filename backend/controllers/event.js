@@ -45,7 +45,9 @@ export const getOneCtrl = (req, res, next) => {
 			}
 			res.status(200).json({ event });
 		})
-		.catch((err) => res.status(400).json({ err: "Event not found" }));
+		.catch((err) =>
+			res.status(400).json({ message: "Event not found", err: err })
+		);
 };
 
 export const getAllCtrl = (req, res, next) => {
