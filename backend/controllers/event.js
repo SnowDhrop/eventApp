@@ -37,12 +37,17 @@ export const getOneCtrl = (req, res, next) => {
 			"private",
 			"active",
 			"id_creator",
+			"createdAt",
+			"updatedAt",
 		],
 	})
 		.then((event) => {
-			if (event == null || event.active === "inactive") {
-				throw "Event not found or inactive";
-			}
+			if (event == null) throw "Event not found";
+
+			if (event.active === "inactive" || event.private === "private")
+				return res
+					.status(403)
+					.json({ message: "This event is private or inactive" });
 
 			if (event.id_creator === req.auth.userId) {
 				event.id_creator = "You have create this event";
@@ -75,7 +80,8 @@ export const getAllCtrl = (req, res, next) => {
 			}
 
 			const eventsPublicActive = events.filter(
-				(event) => event.private === "public"
+				(event) =>
+					event.private !== "private" && event.active !== "inactive"
 			);
 
 			eventsPublicActive.map((event) => {
