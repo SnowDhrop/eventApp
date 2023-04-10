@@ -5,7 +5,7 @@ import sequelize from "../src/database/connection.js";
 // import { Op } from "sequelize";
 
 const Event = sequelize.models.event;
-const Users_Event = sequelize.models.users_event;
+const Subscribe = sequelize.models.subscribe;
 
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
@@ -77,13 +77,13 @@ export const subscribeCtrl = (req, res, next) => {
 	})
 		.then((user) => {
 			// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
-			if (user.active === false || user.private === true) {
+			if (user.active === "inactive" || user.private === true) {
 				res.status(404).json({
 					err: "This event is not active or private",
 				});
 			}
 
-			Users_Event.create({
+			Subscribe.create({
 				id_user: req.auth.userId,
 				id_event: req.params.id,
 			})
@@ -102,7 +102,7 @@ export const subscribeCtrl = (req, res, next) => {
 
 	// Je fais une requête pour vérifier que l'event est public et non complet en récupérant l'id de l'event dans l'url
 
-	// Je crée une entrée dans la table de jointure users_events avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
+	// Je crée une entrée dans la table de jointure subscribe avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
 };
 
 export const updateCtrl = (req, res, next) => {

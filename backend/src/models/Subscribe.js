@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize";
 import sequelize from "../database/connection.js";
 
-const Users_Event = sequelize.define("users_event", {
+const Subscribe = sequelize.define("subscribe", {
 	id: {
 		type: Sequelize.INTEGER(11),
 		allowNull: false,
@@ -26,4 +26,4 @@ const Users_Event = sequelize.define("users_event", {
 	},
 });
 
-export default Users_Event;
+export default Subscribe;

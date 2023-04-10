@@ -1,35 +1,9 @@
 import express from "express";
-// import {
-// 	createCtrl,
-// 	getOneCtrl,
-// 	getAllCtrl,
-// 	subscribeCtrl,
-// 	updateCtrl,
-// 	deleteCtrl,
-// } from "../controllers/event.js";
 
 import * as event from "../controllers/event.js";
-
 import auth from "./../middlewares/auth.js";
 import userVerif from "./../middlewares/userVerif.js";
 import eventVerif from "./../middlewares/eventVerif.js";
-
-// import {
-// 	titleValidator,
-// 	descriptionValidator,
-// 	categoryValidator,
-// 	participantsValidator,
-// 	addressValidator,
-// 	cityValidator,
-// 	locationValidator,
-// 	startDateValidator,
-// 	endDateValidator,
-// 	privateValidator,
-// 	activeValidator,
-// 	participantsMaxValidator,
-// 	styleValidator,
-// } from "./../validators/event.js";
-
 import * as eventVal from "./../validators/event.js";
 
 const router = express.Router();

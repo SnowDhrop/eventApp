@@ -9,27 +9,18 @@ import Mascotte from "./Mascotte.js";
 import Pic from "./Pic.js";
 import Social from "./Social.js";
 import Style from "./Style.js";
-import Users_Event from "./Users_Event.js";
+import Subscribe from "./Subscribe.js";
 import Users_Challenge from "./Users_Challenge.js";
 
-// sequelize.define("user", User);
-// sequelize.define("event", Event);
-// sequelize.define("category", Category);
-// sequelize.define("challenge", Challenge);
-// sequelize.define("mascotte", Mascotte);
-// sequelize.define("pic", Pic);
-// sequelize.define("social", Social);
-// sequelize.define("style", Style);
-
 // DEFINE FOREIGN KEYS
-//Users_Event
+//Subscribe
 User.belongsToMany(Event, {
-	through: Users_Event,
+	through: Subscribe,
 	foreignKey: "id_user",
 	unique: false,
 });
 Event.belongsToMany(User, {
-	through: Users_Event,
+	through: Subscribe,
 	foreignKey: "id_event",
 	unique: false,
 });
