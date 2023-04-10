@@ -7,6 +7,7 @@ import sequelize from "../src/database/connection.js";
 const Event = sequelize.models.event;
 const Subscribe = sequelize.models.subscribe;
 const Favorites = sequelize.models.favorites;
+const User = sequelize.models.user;
 
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
@@ -40,6 +41,16 @@ export const getOneCtrl = (req, res, next) => {
 			"createdAt",
 			"updatedAt",
 		],
+		include: [
+			{
+				model: User,
+				as: "Subscribe",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
+		],
 	})
 		.then((event) => {
 			if (event == null) throw "Event not found";
@@ -49,9 +60,14 @@ export const getOneCtrl = (req, res, next) => {
 					.status(403)
 					.json({ message: "This event is private or inactive" });
 
-			if (event.id_creator === req.auth.userId) {
-				event.id_creator = "You have create this event";
-			}
+			event.id_creator === req.auth.userId
+				? (event.id_creator = "You have create this event")
+				: false;
+
+			event.Subscribe.length > 0
+				? event.setDataValue("Subscribe", true)
+				: event.setDataValue("Subscribe", false);
+
 			res.status(200).json({ event });
 		})
 		.catch((err) =>
@@ -96,6 +112,7 @@ export const getAllCtrl = (req, res, next) => {
 };
 
 export const subscribeCtrl = (req, res, next) => {
+	// Redo it like favoritesCtrl
 	Event.findOne({
 		where: { id_event: req.params.id },
 		attributes: ["active", "private"],

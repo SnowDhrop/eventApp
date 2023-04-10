@@ -19,11 +19,13 @@ User.belongsToMany(Event, {
 	through: Subscribe,
 	foreignKey: "id_user",
 	unique: false,
+	as: "Subscribe",
 });
 Event.belongsToMany(User, {
 	through: Subscribe,
 	foreignKey: "id_event",
 	unique: false,
+	as: "Subscribe",
 });
 
 //Favorites
@@ -31,11 +33,13 @@ User.belongsToMany(Event, {
 	through: Favorites,
 	foreignKey: "id_user",
 	unique: false,
+	as: "Favorites",
 });
 Event.belongsToMany(User, {
 	through: Favorites,
 	foreignKey: "id_event",
 	unique: false,
+	as: "Favorites",
 });
 
 //EVENT RELATIONS
