@@ -37,15 +37,15 @@ export const getOneCtrl = (req, res, next) => {
 			"active",
 		],
 	})
-		.then((user) => {
-			if (user == null) {
+		.then((event) => {
+			if (event == null) {
 				throw "Event not found";
-			} else if (user.active !== true) {
+			} else if (event.active !== "active") {
 				throw "Event not active";
 			}
-			res.status(200).json({ user });
+			res.status(200).json({ event });
 		})
-		.catch((err) => res.status(400).json({ err }));
+		.catch((err) => res.status(400).json({ err: "Event not found" }));
 };
 
 export const getAllCtrl = (req, res, next) => {
@@ -91,11 +91,9 @@ export const subscribeCtrl = (req, res, next) => {
 						.json({ message: "You have subscribe to this event" })
 				)
 				.catch((err) =>
-					res
-						.status(500)
-						.json({
-							err: "You have already subscribe to this event",
-						})
+					res.status(500).json({
+						err: "You have already subscribe to this event",
+					})
 				);
 		})
 		.catch((err) => res.status(404).json({ err: "Event not found" }));
