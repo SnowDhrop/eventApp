@@ -36,13 +36,16 @@ export const getOneCtrl = (req, res, next) => {
 			"end_event",
 			"private",
 			"active",
+			"id_creator",
 		],
 	})
 		.then((event) => {
-			if (event == null) {
-				throw "Event not found";
-			} else if (event.active !== "active") {
-				throw "Event not active";
+			if (event == null || event.active === "inactive") {
+				throw "Event not found or inactive";
+			}
+
+			if (event.id_creator === req.auth.userId) {
+				event.id_creator = "You have create this event";
 			}
 			res.status(200).json({ event });
 		})
@@ -57,16 +60,31 @@ export const getAllCtrl = (req, res, next) => {
 			"title",
 			"description",
 			"participants",
+			"participants_max",
 			"address",
 			"start_event",
 			"end_event",
+			"private",
+			"active",
+			"id_creator",
 		],
 	})
-		.then((event) => {
-			if (event == null) {
+		.then((events) => {
+			if (events == null) {
 				throw "Database empty";
 			}
-			res.status(200).json({ event });
+
+			const eventsPublicActive = events.filter(
+				(event) => event.private === "public"
+			);
+
+			eventsPublicActive.map((event) => {
+				if (event.id_creator === req.auth.userId) {
+					event.id_creator = "You have create this event";
+				}
+			});
+
+			res.status(200).json({ eventsPublicActive });
 		})
 		.catch((err) => res.status(400).json({ err }));
 };
