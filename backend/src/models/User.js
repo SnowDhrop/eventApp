@@ -10,14 +10,10 @@ const User = sequelize.define(
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		id_pic: {
-			type: Sequelize.INTEGER(11),
+		default_pic: {
+			type: Sequelize.BOOLEAN,
 			allowNull: false,
-			references: {
-				model: "pics",
-				key: "id_pic",
-			},
-			defaultValue: 1,
+			defaultValue: true,
 		},
 		pseudo: {
 			type: Sequelize.STRING(50),
@@ -48,12 +44,16 @@ const User = sequelize.define(
 			type: Sequelize.STRING(),
 			allowNull: false,
 		},
+		password_code: {
+			type: Sequelize.STRING(),
+		},
 	},
 	{
 		indexes: [
 			{ unique: true, fields: ["pseudo"] },
 			{ unique: true, fields: ["email"] },
 			{ unique: true, fields: ["confirmation_code"] },
+			{ unique: true, fields: ["password_code"] },
 		],
 	}
 );

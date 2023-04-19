@@ -1,4 +1,5 @@
-const multer = require("multer");
+import multer from "multer";
+import fs from "fs";
 
 const MIME_TYPES = {
 	"image/jpg": "jpg",
@@ -8,14 +9,47 @@ const MIME_TYPES = {
 
 const storage = multer.diskStorage({
 	destination: (req, file, callback) => {
-		callback(null, "./../private/images/profile/");
-	},
-	filename: (req, file, callback) => {
-		const name = file.originalname.split(" ").join("_");
+		const userFolder = `./public/images/user${req.auth.userId}`;
 
-		const extension = MIME_TYPES[file.mimetype];
-		callback(null, name + Date.now() + "." + extension);
+		//Create folder if there is not
+		if (!fs.existsSync(userFolder)) {
+			fs.mkdirSync(userFolder, { recursive: true });
+		}
+		callback(null, userFolder);
+	},
+
+	filename: (req, file, callback) => {
+		const userFolder = `./public/images/user${req.auth.userId}`;
+
+		fs.readdir(userFolder, (err, files) => {
+			if (err) throw err;
+
+			// Verify if there is file in dir
+			const checkIfFiles = (files, userFolder) => {
+				if (files.length !== 0) {
+					for (const file of files) {
+						if (file.startsWith("profil.")) {
+							fs.unlink(`${userFolder}/${file}`, (err) => {
+								if (err) throw err;
+							});
+						}
+					}
+				}
+			};
+
+			// Check if the extension is valid
+			if (!Object.keys(MIME_TYPES).includes(file.mimetype)) {
+				callback(new Error("Invalid file type"));
+			} else {
+				const extension = MIME_TYPES[file.mimetype];
+
+				checkIfFiles(files, userFolder);
+
+				//Download file
+				callback(null, `profil.${extension}`);
+			}
+		});
 	},
 });
 
-module.exports = multer({ storage }).single("image");
+export default multer({ storage }).single("image");
