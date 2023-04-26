@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:draggable_home/draggable_home.dart';
 
-import 'package:frontend/components/animations/animated_bar.dart';
 import 'package:frontend/constants/color.dart';
 import 'package:frontend/constants/shadow.dart';
 

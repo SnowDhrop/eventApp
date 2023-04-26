@@ -7,7 +7,7 @@ import 'package:frontend/pages/authentification/login.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/constants/color.dart';
 
-void main() {
+Future<void> main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => LocaleModel(),

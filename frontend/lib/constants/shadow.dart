@@ -18,9 +18,9 @@ class IconShadowState extends State<IconShadow> {
           borderRadius: BorderRadius.all(Radius.circular(15)),
           boxShadow: [
             BoxShadow(
-                color: ConstantsColors.primaryColor,
-                spreadRadius: 1,
-                blurRadius: 30,
+                color: Color.fromARGB(129, 177, 0, 253),
+                spreadRadius: 3,
+                blurRadius: 15,
                 blurStyle: BlurStyle.normal)
           ]),
       child: Material(

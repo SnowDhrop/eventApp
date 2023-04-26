@@ -19,16 +19,18 @@ dependencies:
 
   intl: any
   provider: ^6.0.5
-  rive: ^0.10.2
   http: ^0.13.5
 
   flutter_map: ^3.1.0
   latlong2: ^0.8.1
   anim_search_bar: ^2.0.3
   dio: ^5.0.2
-  shared_preferences: ^2.0.18
+  shared_preferences: ^2.1.0
   flutter_svg: ^2.0.4
   draggable_home: ^1.0.4
+  location: ^4.4.0
+  app_settings: ^4.2.0
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
@@ -43,7 +45,6 @@ flutter:
   generate: true
 
   assets:
-    - assets/rive_icons/
     - assets/background/
     - assets/logo/
     - assets/icons/

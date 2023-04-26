@@ -180,15 +180,17 @@ class SignUpFormState extends State<SignUpForm> {
   bool isApiCallProcess = false;
   GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
 
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _pseudoController = TextEditingController();
-  final _birthdayController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _pseudoController = TextEditingController();
+  final TextEditingController _birthdayController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   String _errorMessage = '';
   final scaffoldKey = GlobalKey<ScaffoldState>();
   FocusNode focusNode = FocusNode();
+
   late SignupRequestModel signupRequestModel;
 
   @override
@@ -202,12 +204,13 @@ class SignUpFormState extends State<SignUpForm> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+		_confirmPasswordController.dispose();
     _pseudoController.dispose();
     _birthdayController.dispose();
     super.dispose();
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -239,8 +242,8 @@ class SignUpFormState extends State<SignUpForm> {
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
             hintText: 'Date de naissance',
-            prefixIcon: Icons.calendar_month_rounded,
-            controller: _pseudoController,
+            prefixIcon: Icons.calendar_today_rounded,
+            controller: _birthdayController,
             textStyle: const TextStyle(
                 fontFamily: 'Gilroy',
                 fontWeight: FontWeight.w600,
@@ -259,7 +262,7 @@ class SignUpFormState extends State<SignUpForm> {
           child: CustomFormField(
             hintText: 'Email',
             prefixIcon: Icons.mail_rounded,
-            controller: _pseudoController,
+            controller: _emailController,
             textStyle: const TextStyle(
                 fontFamily: 'Gilroy',
                 fontWeight: FontWeight.w600,
@@ -278,7 +281,8 @@ class SignUpFormState extends State<SignUpForm> {
           child: CustomFormField(
             hintText: 'Mot de passe',
             prefixIcon: Icons.lock_rounded,
-            controller: _pseudoController,
+            controller: _passwordController,
+            isPasswordField: true,
             textStyle: const TextStyle(
                 fontFamily: 'Gilroy',
                 fontWeight: FontWeight.w600,
@@ -297,7 +301,8 @@ class SignUpFormState extends State<SignUpForm> {
           child: CustomFormField(
             hintText: 'Confirmer mot de passe',
             prefixIcon: Icons.lock_rounded,
-            controller: _pseudoController,
+            controller: _confirmPasswordController,
+            isPasswordField: true,
             textStyle: const TextStyle(
                 fontFamily: 'Gilroy',
                 fontWeight: FontWeight.w600,
@@ -323,113 +328,84 @@ class SignUpFormState extends State<SignUpForm> {
                       ])),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
+
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent),
-                onPressed: () {
-                  if (_submitForm()) {
-                    print(signupRequestModel.toJson());
-                    setState(() {
-                      // Add this setState() call to update the loading state in all cases.
-                      isApiCallProcess = false;
-                    });
-
-                    SignupService signupService = SignupService();
-                    signupService.signup(signupRequestModel).then((response) {
-                      setState(() {
-                        isApiCallProcess = false;
-                      });
-                      if (response != null && response.statusCode == 200) {
-                        var value = response.data;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Signup successful')),
-                        );
-                        Timer(const Duration(seconds: 2), () {
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const LoginPage()),
-                              (Route<dynamic> route) => false);
-                        });
-                      } else {
-                        // Add this else block to handle unsuccessful responses
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Signup failed. Please try again.')),
-                        );
-                      }
-                    });
-                  }
-                },
-                child: const Padding(
-                  padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-                  child: Text(
-                    'S\'inscrire',
-                    style: TextStyle(
-                        fontFamily: 'Gilroy',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20),
-                  ),
-                ),
+            	onPressed: () {
+								if (_submitForm()) {
+									_registerAccount();
+								}
+							},
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+              child: Text(
+                'S\'inscrire',
+                style: TextStyle(
+                    fontFamily: 'Gilroy',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20),
               ),
             ),
-          ],
+          ),
         ),
-      ]),
-    );
+      ],
+    ),
+  ]),
+);
   }
 
-  bool _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      return true;
-    }
-    return false;
+bool _submitForm() {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    return true;
   }
+  return false;
+}
 
-  void _registerAccount() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    final pseudo = _pseudoController.text;
-    final birthday = _birthdayController.text;
+void _registerAccount() async {
+	final email = _emailController.text;
+	final password = _passwordController.text;
+	final pseudo = _pseudoController.text;
+	final birthday = _birthdayController.text;
 
-    setState(() {
-      isApiCallProcess = true;
-    });
+		setState(() {
+		isApiCallProcess = true;
+	});
 
-    final signupService = SignupService(); // Create an instance of ApiService
-    final response = await signupService.signup(signupRequestModel);
-
-    if (response != null && response.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
-    } else {
-      setState(() {
-        isApiCallProcess = false;
-        if (response != null) {
-          if (response.data['errors'] != null) {
-            _errorMessage = '';
-            List<dynamic> errors = response.data['errors'];
-            for (var error in errors) {
-              _errorMessage += '${error['msg']} ';
-            }
-          } else if (response.data['err'] != null &&
-              response.data['err']['name'] ==
-                  'SequelizeUniqueConstraintError') {
-            _errorMessage = 'Pseudo or email already exists. Please try again.';
-          } else {
-            _errorMessage = "Error signing up. Please try again later.";
-          }
-        } else {
-          _errorMessage = "Error signing up. Please try again later.";
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_errorMessage)),
-      );
-    }
+	final signupService = SignupService(); // Create an instance of ApiService
+	final response = await signupService.signup(signupRequestModel);
+	print(response);
+	 print('Inside _registerAccount()');
+	if (response != null && response.statusCode == 200) {
+		Navigator.push(
+			context,
+			MaterialPageRoute(builder: (context) => const LoginPage()),
+		);
+	} else {
+		setState(() {
+			isApiCallProcess = false;
+			if (response != null) {
+				if (response.data['errors'] != null) {
+					_errorMessage = '';
+					List<dynamic> errors = response.data['errors'];
+					for (var error in errors) {
+						_errorMessage += '${error['msg']} ';
+					}
+				} else if (response.data['err'] != null &&
+						response.data['err']['name'] ==
+								'SequelizeUniqueConstraintError') {
+					_errorMessage = 'Pseudo or email already exists. Please try again.';
+				} else {
+					_errorMessage = "Error signing up. Please try again later.";
+				}
+			} else {
+				_errorMessage = "Error signing up. Please try again later.";
+			}
+		});
+		ScaffoldMessenger.of(context).showSnackBar(
+			SnackBar(content: Text(_errorMessage)),
+		);
+	}
   }
 }
 

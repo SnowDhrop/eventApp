@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/components/animations/animated_bar.dart';
 import 'package:frontend/components/navigation/bottom_app_bar.dart';
 import 'package:frontend/components/navigation/top_app_bar.dart';
 import 'package:frontend/constants/color.dart';
