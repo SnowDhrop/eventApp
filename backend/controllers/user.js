@@ -5,16 +5,24 @@ import jwt from "jsonwebtoken";
 import sequelize from "../src/database/connection.js";
 import { Op } from "sequelize";
 import dotenv from "dotenv";
+import transport from "./../config/nodemailer.js";
 
 const User = sequelize.models.user;
 
 dotenv.config();
+
+// - likes (en + de subscribe)
+// - get My Events
+// - associer artistes et genrs préférés à l'utilisateur
+// - pouvooir les modifier
+// - script pour récup events et les stocker
 
 export const signupCtrl = (req, res, next) => {
 	//VALIDATORS
 	const errors = validationResult(req);
 
 	if (!errors.isEmpty()) {
+		6;
 		return res.status(422).json({ errors: errors.array() });
 	}
 
@@ -22,7 +30,7 @@ export const signupCtrl = (req, res, next) => {
 
 	User.findOne({
 		where: {
-			// Recherche par email ou pseudo
+			// Search by user or pseudo
 			[Op.or]: [
 				{
 					email: req.body.email,
@@ -87,9 +95,11 @@ export const loginCtrl = (req, res, next) => {
 	const checkConfirmationEmail = (user) => {
 		if (user.status === "pending") {
 			console.log("En attente de confirmation", user.confirmation_code);
-			// const error = new Error("Pending account. Please verify your email");
-			// error.status = 401;
-			// throw error;
+			const error = new Error(
+				"Pending account. Please verify your email"
+			);
+			error.status = 401;
+			throw error;
 		}
 	};
 
@@ -151,24 +161,30 @@ export const getOneCtrl = (req, res, next) => {
 		where: whereClause,
 		attributes: ["pseudo", "email", "birthday", "createdAt", "updatedAt"],
 	})
-		.then((user) => {
-			if (user == null) {
-				throw "User doesn't found";
+		.then((users) => {
+			if (users == null) {
+				throw "User not found";
 			}
-			res.status(200).json({ user });
+
+			req.users = { users };
+
+			next();
+			// res.status(200).json({ user });
 		})
 		.catch((err) => res.status(400).json({ err }));
 };
 
 export const getAllCtrl = (req, res, next) => {
 	User.findAll({
-		attributes: ["pseudo"],
+		attributes: ["id_user", "pseudo", "birthday", "createdAt"],
 	})
-		.then((user) => {
-			if (user == null) {
-				throw "Database empty";
+		.then((users) => {
+			if (users == null) {
+				throw "Server error";
 			}
-			res.status(200).json({ user });
+
+			req.users = { users };
+			next();
 		})
 		.catch((err) => res.status(400).json({ err }));
 };
@@ -178,27 +194,29 @@ export const updateCtrl = (req, res, next) => {
 
 	if (!errors.isEmpty()) {
 		return res.status(422).json({ errors: errors.array() });
+	} else {
+		bcrypt
+			.hash(req.body.password, 10)
+			.then((hash) => {
+				//          Création de l'utilisateur
+				User.update(
+					{
+						pseudo: req.body.pseudo,
+						email: req.body.email,
+						password: hash,
+					},
+					{
+						where: { id_user: req.auth.userId },
+					}
+				)
+					.then(() =>
+						res.status(201).json({ message: "User updated" })
+					)
+					.catch((err) => res.status(400).json({ err }));
+			})
+
+			.catch((err) => res.status(500).json({ err }));
 	}
-
-	bcrypt
-		.hash(req.body.password, 10)
-		.then((hash) => {
-			//          Création de l'utilisateur
-			User.update(
-				{
-					pseudo: req.body.pseudo,
-					email: req.body.email,
-					password: hash,
-				},
-				{
-					where: { id_user: req.params.id },
-				}
-			)
-				.then(() => res.status(201).json({ message: "User updated" }))
-				.catch((err) => res.status(400).json({ err }));
-		})
-
-		.catch((err) => res.status(500).json({ err }));
 };
 
 export const deleteCtrl = (req, res, next) => {
@@ -211,4 +229,22 @@ export const deleteCtrl = (req, res, next) => {
 		);
 };
 
-export const addPic = (req, res, next) => {};
+export const changePassRequest = (req, res, next) => {
+	const token = jwt.sign({ email: req.user.email }, process.env.JWTKEY1);
+
+	User.update(
+		{ password_code: token },
+		{
+			where: { email: req.user.email },
+		}
+	)
+		.then(() => {
+			req.changePass = { token };
+
+			res.status(200).json({
+				message: "Password Code added",
+			});
+			next();
+		})
+		.catch((err) => res.status(500).json({ err }));
+};
