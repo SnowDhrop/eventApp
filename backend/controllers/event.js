@@ -54,10 +54,17 @@ export const getOneCtrl = (req, res, next) => {
 export const getAllCtrl = (req, res, next) => {
 	Event.findAll({
 		attributes: [
+			"id_event",
+			"id_style", 
+			"id_category",
+			"id_creator",
 			"title",
 			"description",
 			"participants",
+			"participants_max",
 			"address",
+			"city",
+			"location",
 			"start_event",
 			"end_event",
 		],
