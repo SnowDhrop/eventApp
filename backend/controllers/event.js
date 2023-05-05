@@ -28,6 +28,9 @@ export const getOneCtrl = (req, res, next) => {
 	Event.findOne({
 		where: { id_event: req.params.id },
 		attributes: [
+			"id_event",
+			"id_style", 
+			"id_category",
 			"title",
 			"description",
 			"participants",
@@ -81,7 +84,6 @@ export const getAllCtrl = (req, res, next) => {
 			"id_event",
 			"id_style", 
 			"id_category",
-			"id_creator",
 			"title",
 			"description",
 			"participants",
