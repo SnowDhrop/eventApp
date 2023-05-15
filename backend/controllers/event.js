@@ -53,6 +53,14 @@ export const getOneCtrl = (req, res, next) => {
 				where: { id_user: req.auth.userId },
 				required: false,
 			},
+			{
+				model: User,
+				as: "Favorites",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
 		],
 	})
 		.then((event) => {
@@ -70,6 +78,10 @@ export const getOneCtrl = (req, res, next) => {
 			event.Subscribe.length > 0
 				? event.setDataValue("Subscribe", true)
 				: event.setDataValue("Subscribe", false);
+
+			event.Favorites.length > 0
+				? event.setDataValue("Favorites", true)
+				: event.setDataValue("Favorites", false);
 
 			res.status(200).json({ event });
 		})
@@ -97,10 +109,28 @@ export const getAllCtrl = (req, res, next) => {
 			"active",
 			"id_creator",
 		],
+		include: [
+			{
+				model: User,
+				as: "Subscribe",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
+			{
+				model: User,
+				as: "Favorites",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
+		],
 	})
 		.then((events) => {
 			if (events == null) {
-				throw "Database empty";
+				throw "There is not event";
 			}
 
 			const eventsPublicActive = events.filter(
@@ -108,9 +138,21 @@ export const getAllCtrl = (req, res, next) => {
 			);
 
 			eventsPublicActive.map((event) => {
-				if (event.id_creator === req.auth.userId) {
-					event.id_creator = "You have create this event";
-				}
+				// if (event.id_creator === req.auth.userId) {
+				// 	event.id_creator = "You have create this event";
+				// }
+
+				event.id_creator === req.auth.userId
+					? (event.id_creator = "You have create this")
+					: "";
+
+				event.Subscribe.length > 0
+					? event.setDataValue("Subscribe", true)
+					: event.setDataValue("Subscribe", false);
+
+				event.Favorites.length > 0
+					? event.setDataValue("Favorites", true)
+					: event.setDataValue("Favorites", false);
 			});
 
 			res.status(200).json({ eventsPublicActive });
@@ -118,36 +160,10 @@ export const getAllCtrl = (req, res, next) => {
 		.catch((err) => res.status(400).json({ err }));
 };
 
+export const getMyEventsCtrl = (req, res, next) => {};
+
 export const subscribeCtrl = (req, res, next) => {
-	// Redo it like favoritesCtrl
-	// Event.findOne({
-	// 	where: { id_event: req.params.id },
-	// 	attributes: ["active", "private"],
-	// })
-	// 	.then((user) => {
-	// 		// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
-	// 		if (user.active === "inactive" || user.private === "private") {
-	// 			res.status(404).json({
-	// 				err: "This event is private or not active",
-	// 			});
-	// 		}
-
-	// 		Subscribe.create({
-	// 			id_user: req.auth.userId,
-	// 			id_event: req.params.id,
-	// 		})
-	// 			.then(() =>
-	// 				res.status(201).json({ message: "You have subscribe to this event" })
-	// 			)
-	// 			.catch((err) =>
-	// 				res.status(500).json({
-	// 					err: "You have already subscribe to this event",
-	// 				})
-	// 			);
-	// 	})
-	// 	.catch((err) => res.status(404).json({ err: "Event not found" }));
-
-	// if the event is found with id_event and user_id, delete it
+	//Same logic of favorites
 	Subscribe.destroy({
 		where: { id_event: req.params.id, id_user: req.auth.userId },
 	})
@@ -197,8 +213,6 @@ export const subscribeCtrl = (req, res, next) => {
 				error: err,
 			})
 		);
-
-	// Je crée une entrée dans la table de jointure subscribe avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
 };
 
 export const favoritesCtrl = (req, res, next) => {

@@ -11,7 +11,6 @@ const User = sequelize.models.user;
 
 dotenv.config();
 
-// - likes (en + de subscribe)
 // - get My Events
 // - associer artistes et genrs préférés à l'utilisateur
 // - pouvooir les modifier
@@ -59,10 +58,7 @@ export const signupCtrl = (req, res, next) => {
 					const email = req.body.email;
 					const pseudo = req.body.pseudo;
 
-					const token = jwt.sign(
-						{ email: email },
-						process.env.JWTKEY1
-					);
+					const token = jwt.sign({ email: email }, process.env.JWTKEY1);
 
 					req.confirmationCode = { token, email, pseudo };
 
@@ -95,9 +91,7 @@ export const loginCtrl = (req, res, next) => {
 	const checkConfirmationEmail = (user) => {
 		if (user.status === "pending") {
 			console.log("En attente de confirmation", user.confirmation_code);
-			const error = new Error(
-				"Pending account. Please verify your email"
-			);
+			const error = new Error("Pending account. Please verify your email");
 			error.status = 401;
 			throw error;
 		}
@@ -117,9 +111,7 @@ export const loginCtrl = (req, res, next) => {
 				.compare(req.body.password, user.password)
 				.then((valid) => {
 					if (!valid) {
-						return res
-							.status(401)
-							.json({ message: "Wrong password" });
+						return res.status(401).json({ message: "Wrong password" });
 					}
 
 					checkConfirmationEmail(user);
@@ -128,13 +120,9 @@ export const loginCtrl = (req, res, next) => {
 					res.status(200).json({
 						// userId: user.id_user,
 						// isAdmin: user.is_admin,
-						token: jwt.sign(
-							{ userId: user.id_user },
-							process.env.JWTKEY2,
-							{
-								expiresIn: "24h",
-							}
-						),
+						token: jwt.sign({ userId: user.id_user }, process.env.JWTKEY2, {
+							expiresIn: "24h",
+						}),
 					});
 				})
 				.catch((err) => {
@@ -209,9 +197,7 @@ export const updateCtrl = (req, res, next) => {
 						where: { id_user: req.auth.userId },
 					}
 				)
-					.then(() =>
-						res.status(201).json({ message: "User updated" })
-					)
+					.then(() => res.status(201).json({ message: "User updated" }))
 					.catch((err) => res.status(400).json({ err }));
 			})
 
@@ -224,9 +210,7 @@ export const deleteCtrl = (req, res, next) => {
 		where: { id_user: req.params.id },
 	})
 		.then(() => res.status(200).json({ message: "User deleted" }))
-		.catch((err) =>
-			res.status(400).json({ message: "User can't be delete " })
-		);
+		.catch((err) => res.status(400).json({ message: "User can't be delete " }));
 };
 
 export const changePassRequest = (req, res, next) => {

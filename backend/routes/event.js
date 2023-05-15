@@ -52,8 +52,10 @@ router.put(
 
 router.delete("/:id", auth, eventVerif, event.deleteCtrl);
 
-router.get("/:id", auth, event.subscribeCtrl);
+router.get("/subscribe/:id", auth, event.subscribeCtrl);
 
 router.get("/favorites/:id", auth, event.favoritesCtrl);
+
+router.get("/myevents", auth, event.getMyEventsCtrl);
 
 export default router;
