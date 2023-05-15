@@ -24,7 +24,7 @@ sequelize
 		sequelize
 			.sync({ force: false })
 			.then(() => {
-				console.log("Database is ok");
+				console.log("Tables created");
 			})
 			.catch((error) => {
 				console.error("Unable to create tables : ", error);

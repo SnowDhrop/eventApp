@@ -11,8 +11,14 @@ const User = sequelize.models.user;
 
 dotenv.config();
 
+// Récupérer une base de styles de musiques
+// Rajouter données initiales de style de musique
+// Récupérer une base d'artistes
+// Rajouter données initiales d'artistes
+// Créer un nouveau script qui rajoute les nouveaux styles/artistes à la base avec upsert
+
 // - associer artistes et genrs préférés à l'utilisateur
-// - pouvooir les modifier
+// - pouvoir les modifier
 // - script pour récup events et les stocker
 
 export const signupCtrl = (req, res, next) => {
