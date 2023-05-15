@@ -43,15 +43,12 @@ const sequelize = new Sequelize(DATABASE, DBUSER, DBMDP, {
 	logging: false,
 });
 
-// Forcer toutes les tables à se supprimer
 sequelize
 	.authenticate()
 	.then(async () => {
-		console.log(sequelize.models);
 		await sequelize.query("SET FOREIGN_KEY_CHECKS = 0", { raw: true });
 
 		for (let i = 0; i < models.length; i++) {
-			// Drop table one by one
 			await models[i].drop({ force: true });
 		}
 		await sequelize.query("SET FOREIGN_KEY_CHECKS = 1", { raw: true });
