@@ -2,6 +2,11 @@
 
 An App which propose the events that are related to your interests
 
+# Scripts
+
+- npm run seed: create initial datas for categories/styles/artists
+- npm run dropTables: delete all tables. The tables are recreated when you start again the server. Don't forget to add initial datas with "npm run seed"
+
 # ENV procedure
 
 - On crée une branche pour chaque nouvelle feature
@@ -18,8 +23,3 @@ An App which propose the events that are related to your interests
 - git checkout front > git pull (récupérer changements distant)
 - git push origin [branch with new changes] : [branch your are pushing to]
 - ... jusqu'à prod
-
-# Scripts
-
-- npm run seed: create initial datas for categories/styles/artists
-- npm run dropTables: delete all tables. The tables are recreated when you start again the server. Don't forget to add initial datas with "npm run seed"
