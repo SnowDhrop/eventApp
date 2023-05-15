@@ -8,8 +8,8 @@ import * as eventVal from "./../validators/event.js";
 
 const router = express.Router();
 
-router.get("/search/:id", event.getOneCtrl);
-router.get("/", event.getAllCtrl);
+router.get("/search/:id", auth, event.getOneCtrl);
+router.get("/", auth, event.getAllCtrl);
 
 router.post(
 	"/",

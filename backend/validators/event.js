@@ -104,8 +104,11 @@ export const endDateValidator = [
 
 export const privateValidator = [
 	check("private", "Do you want to set your event as private ?")
-		.isNumeric()
-		.withMessage("Choose an answer")
+		.optional()
+		.isString()
+		.withMessage("Must be a string")
+		.isIn(["private", "public"])
+		.withMessage("Doesn't contain a valid value")
 		.trim()
 		.escape(),
 ];
@@ -113,8 +116,10 @@ export const privateValidator = [
 export const activeValidator = [
 	check("active", "Do you want to already set your event as active ?")
 		.optional()
-		.isNumeric()
-		.withMessage("Choose an answer")
+		.isString()
+		.withMessage("Must be a string")
+		.isIn(["active", "inactive"])
+		.withMessage("Doesn't contain a valid value")
 		.trim()
 		.escape(),
 ];

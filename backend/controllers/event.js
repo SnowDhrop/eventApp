@@ -7,6 +7,7 @@ import sequelize from "../src/database/connection.js";
 const Event = sequelize.models.event;
 const Subscribe = sequelize.models.subscribe;
 const Favorites = sequelize.models.favorites;
+const User = sequelize.models.user;
 
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
@@ -27,6 +28,9 @@ export const getOneCtrl = (req, res, next) => {
 	Event.findOne({
 		where: { id_event: req.params.id },
 		attributes: [
+			"id_event",
+			"id_style", 
+			"id_category",
 			"title",
 			"description",
 			"participants",
@@ -36,14 +40,37 @@ export const getOneCtrl = (req, res, next) => {
 			"end_event",
 			"private",
 			"active",
+			"id_creator",
+			"createdAt",
+			"updatedAt",
+		],
+		include: [
+			{
+				model: User,
+				as: "Subscribe",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
 		],
 	})
 		.then((event) => {
-			if (event == null) {
-				throw "Event not found";
-			} else if (event.active !== "active") {
-				throw "Event not active";
-			}
+			if (event == null) throw "Event not found";
+
+			if (event.active === "inactive" || event.private === "private")
+				return res
+					.status(403)
+					.json({ message: "This event is private or inactive" });
+
+			event.id_creator === req.auth.userId
+				? (event.id_creator = "You have create this event")
+				: false;
+
+			event.Subscribe.length > 0
+				? event.setDataValue("Subscribe", true)
+				: event.setDataValue("Subscribe", false);
+
 			res.status(200).json({ event });
 		})
 		.catch((err) =>
@@ -54,24 +81,46 @@ export const getOneCtrl = (req, res, next) => {
 export const getAllCtrl = (req, res, next) => {
 	Event.findAll({
 		attributes: [
+			"id_event",
+			"id_style", 
+			"id_category",
 			"title",
 			"description",
 			"participants",
+			"participants_max",
 			"address",
+			"city",
+			"location",
 			"start_event",
 			"end_event",
+			"private",
+			"active",
+			"id_creator",
 		],
 	})
-		.then((event) => {
-			if (event == null) {
+		.then((events) => {
+			if (events == null) {
 				throw "Database empty";
 			}
-			res.status(200).json({ event });
+
+			const eventsPublicActive = events.filter(
+				(event) =>
+					event.private !== "private" && event.active !== "inactive"
+			);
+
+			eventsPublicActive.map((event) => {
+				if (event.id_creator === req.auth.userId) {
+					event.id_creator = "You have create this event";
+				}
+			});
+
+			res.status(200).json({ eventsPublicActive });
 		})
 		.catch((err) => res.status(400).json({ err }));
 };
 
 export const subscribeCtrl = (req, res, next) => {
+	// Redo it like favoritesCtrl
 	Event.findOne({
 		where: { id_event: req.params.id },
 		attributes: ["active", "private"],
