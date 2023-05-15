@@ -9,6 +9,9 @@ const Subscribe = sequelize.models.subscribe;
 const Favorites = sequelize.models.favorites;
 const User = sequelize.models.user;
 
+// Rajouter un cas d'utilisation: si l'utilisateur a créé l'évènement, l'inscrit automatiquement à l'event
+// et il ne peut pas s'y désinscrire
+
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
 
@@ -138,12 +141,8 @@ export const getAllCtrl = (req, res, next) => {
 			);
 
 			eventsPublicActive.map((event) => {
-				// if (event.id_creator === req.auth.userId) {
-				// 	event.id_creator = "You have create this event";
-				// }
-
 				event.id_creator === req.auth.userId
-					? (event.id_creator = "You have create this")
+					? (event.id_creator = "You have create this event")
 					: "";
 
 				event.Subscribe.length > 0
@@ -160,7 +159,74 @@ export const getAllCtrl = (req, res, next) => {
 		.catch((err) => res.status(400).json({ err }));
 };
 
-export const getMyEventsCtrl = (req, res, next) => {};
+export const getMyEventsCtrl = (req, res, next) => {
+	Event.findAll({
+		attributes: [
+			"id_event",
+			"id_style",
+			"id_category",
+			"title",
+			"description",
+			"participants",
+			"participants_max",
+			"address",
+			"city",
+			"location",
+			"start_event",
+			"end_event",
+			"private",
+			"active",
+			"id_creator",
+		],
+		include: [
+			{
+				model: User,
+				as: "Subscribe",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
+			{
+				model: User,
+				as: "Favorites",
+				attributes: ["id_user"],
+				through: { attributes: [] },
+				where: { id_user: req.auth.userId },
+				required: false,
+			},
+		],
+	})
+		.then((events) => {
+			if (events == null) {
+				throw "There is not event";
+			}
+
+			const eventsPublicActive = events.filter(
+				(event) =>
+					event.private !== "private" &&
+					event.active !== "inactive" &&
+					event.id_creator === req.auth.userId
+			);
+
+			eventsPublicActive.map((event) => {
+				// event.id_creator === req.auth.userId
+				// 	? (event.id_creator = "You have create this event")
+				// 	: "";
+
+				event.Subscribe.length > 0
+					? event.setDataValue("Subscribe", true)
+					: event.setDataValue("Subscribe", false);
+
+				event.Favorites.length > 0
+					? event.setDataValue("Favorites", true)
+					: event.setDataValue("Favorites", false);
+			});
+
+			res.status(200).json({ eventsPublicActive });
+		})
+		.catch((err) => res.status(400).json({ err }));
+};
 
 export const subscribeCtrl = (req, res, next) => {
 	//Same logic of favorites
