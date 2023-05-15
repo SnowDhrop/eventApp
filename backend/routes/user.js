@@ -63,6 +63,7 @@ router.delete(
 	userControllers.deleteCtrl
 );
 
+// CONFIRM ACCOUNT
 router.get("/confirm/:code", confirmationEmail.confirmCodeCtrl);
 
 // CHANGE PASSWORD

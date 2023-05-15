@@ -29,7 +29,7 @@ export const getOneCtrl = (req, res, next) => {
 		where: { id_event: req.params.id },
 		attributes: [
 			"id_event",
-			"id_style", 
+			"id_style",
 			"id_category",
 			"title",
 			"description",
@@ -82,7 +82,7 @@ export const getAllCtrl = (req, res, next) => {
 	Event.findAll({
 		attributes: [
 			"id_event",
-			"id_style", 
+			"id_style",
 			"id_category",
 			"title",
 			"description",
@@ -104,8 +104,7 @@ export const getAllCtrl = (req, res, next) => {
 			}
 
 			const eventsPublicActive = events.filter(
-				(event) =>
-					event.private !== "private" && event.active !== "inactive"
+				(event) => event.private !== "private" && event.active !== "inactive"
 			);
 
 			eventsPublicActive.map((event) => {
@@ -121,36 +120,83 @@ export const getAllCtrl = (req, res, next) => {
 
 export const subscribeCtrl = (req, res, next) => {
 	// Redo it like favoritesCtrl
-	Event.findOne({
-		where: { id_event: req.params.id },
-		attributes: ["active", "private"],
+	// Event.findOne({
+	// 	where: { id_event: req.params.id },
+	// 	attributes: ["active", "private"],
+	// })
+	// 	.then((user) => {
+	// 		// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
+	// 		if (user.active === "inactive" || user.private === "private") {
+	// 			res.status(404).json({
+	// 				err: "This event is private or not active",
+	// 			});
+	// 		}
+
+	// 		Subscribe.create({
+	// 			id_user: req.auth.userId,
+	// 			id_event: req.params.id,
+	// 		})
+	// 			.then(() =>
+	// 				res.status(201).json({ message: "You have subscribe to this event" })
+	// 			)
+	// 			.catch((err) =>
+	// 				res.status(500).json({
+	// 					err: "You have already subscribe to this event",
+	// 				})
+	// 			);
+	// 	})
+	// 	.catch((err) => res.status(404).json({ err: "Event not found" }));
+
+	// if the event is found with id_event and user_id, delete it
+	Subscribe.destroy({
+		where: { id_event: req.params.id, id_user: req.auth.userId },
 	})
-		.then((user) => {
-			// Créer un cas où l'event est privé et seul les amis du créateur de l'évent peuvent y accéder.
-			if (user.active === "inactive" || user.private === "private") {
-				res.status(404).json({
-					err: "This event is private or not active",
+		.then((deletion) => {
+			if (deletion === 1) {
+				return res.status(200).json({
+					message: "You are not subscribed to this event anymore",
 				});
 			}
 
-			Subscribe.create({
-				id_user: req.auth.userId,
-				id_event: req.params.id,
+			// Verify if the event exist and if he's inactive or private, send a 401 message, otherwise create a relation
+			Event.findOne({
+				where: { id_event: req.params.id },
+				attributes: ["active", "private"],
 			})
-				.then(() =>
-					res
-						.status(201)
-						.json({ message: "You have subscribe to this event" })
-				)
-				.catch((err) =>
-					res.status(500).json({
-						err: "You have already subscribe to this event",
-					})
-				);
-		})
-		.catch((err) => res.status(404).json({ err: "Event not found" }));
+				.then((event) => {
+					if (event.active === "inactive" || event.private === "private") {
+						throw "This event is private or inactive";
+					}
 
-	// Je fais une requête pour vérifier que l'event est public et non complet en récupérant l'id de l'event dans l'url
+					Subscribe.create({
+						id_user: req.auth.userId,
+						id_event: req.params.id,
+					})
+						.then(() =>
+							res.status(201).json({
+								message: "You have subscribe to this event",
+							})
+						)
+						.catch((err) =>
+							res.status(500).json({ message: "Server error", error: err })
+						);
+				})
+				.catch((err) => {
+					let message = {};
+
+					err.length > 0
+						? (message = { error: err })
+						: (message = { message: "Event not found" });
+
+					res.status(404).json({ message });
+				});
+		})
+		.catch((err) =>
+			res.status(500).json({
+				message: "Can't unsubscribe of this event",
+				error: err,
+			})
+		);
 
 	// Je crée une entrée dans la table de jointure subscribe avec l'id de l'utilisateur stocké dans req.auth et l'id de l'event
 };
@@ -173,13 +219,8 @@ export const favoritesCtrl = (req, res, next) => {
 				attributes: ["active", "private"],
 			})
 				.then((event) => {
-					if (
-						event.active === "inactive" ||
-						event.private === "private"
-					) {
-						res.status(401).json({
-							message: "This event is private or inactive",
-						});
+					if (event.active === "inactive" || event.private === "private") {
+						throw "This event is private or inactive";
 					}
 
 					Favorites.create({
@@ -188,25 +229,26 @@ export const favoritesCtrl = (req, res, next) => {
 					})
 						.then(() =>
 							res.status(201).json({
-								message:
-									"You added this event to your favorites",
+								message: "You added this event to your favorites",
 							})
 						)
 						.catch((err) =>
-							res
-								.status(500)
-								.json({ message: "Server error", error: err })
+							res.status(500).json({ message: "Server error", error: err })
 						);
 				})
-				.catch((err) =>
-					res
-						.status(404)
-						.json({ message: "Event not found", error: err })
-				);
+				.catch((err) => {
+					let message = {};
+
+					err.length > 0
+						? (message = { error: err })
+						: (message = { message: "Event not found" });
+
+					res.status(404).json({ message });
+				});
 		})
 		.catch((err) =>
 			res.status(500).json({
-				message: "Deletion of the event don't works",
+				message: "Can't discard this event of your favorites",
 				error: err,
 			})
 		);
@@ -249,8 +291,6 @@ export const deleteCtrl = (req, res, next) => {
 	})
 		.then(() => res.status(200).json({ message: "Event deleted" }))
 		.catch((err) =>
-			res
-				.status(400)
-				.json({ message: "Event can't be delete ", error: err })
+			res.status(400).json({ message: "Event can't be delete ", error: err })
 		);
 };
