@@ -22,4 +22,4 @@ An App which propose the events that are related to your interests
 # Scripts
 
 - npm run seed: create initial datas for categories/styles/artists
-- npm run dropTables: delete all tables. The tables are recreated when you start again the server. Don't forget to do add initial datas with "npm run seed"
+- npm run dropTables: delete all tables. The tables are recreated when you start again the server. Don't forget to add initial datas with "npm run seed"
