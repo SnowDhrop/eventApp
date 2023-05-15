@@ -11,7 +11,6 @@ const User = sequelize.models.user;
 
 dotenv.config();
 
-// - get My Events
 // - associer artistes et genrs préférés à l'utilisateur
 // - pouvooir les modifier
 // - script pour récup events et les stocker

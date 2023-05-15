@@ -12,6 +12,8 @@ const User = sequelize.models.user;
 // Rajouter un cas d'utilisation: si l'utilisateur a créé l'évènement, l'inscrit automatiquement à l'event
 // et il ne peut pas s'y désinscrire
 
+// Rajouter la possibilité de spécifier des utilisateurs qui peuvent s'inscrire aux events privés
+
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
 
@@ -78,13 +80,8 @@ export const getOneCtrl = (req, res, next) => {
 				? (event.id_creator = "You have create this event")
 				: false;
 
-			event.Subscribe.length > 0
-				? event.setDataValue("Subscribe", true)
-				: event.setDataValue("Subscribe", false);
-
-			event.Favorites.length > 0
-				? event.setDataValue("Favorites", true)
-				: event.setDataValue("Favorites", false);
+			checkIFavoritesOrSubscribe(event, Subscribe);
+			checkIFavoritesOrSubscribe(event, Favorites);
 
 			res.status(200).json({ event });
 		})
@@ -145,13 +142,8 @@ export const getAllCtrl = (req, res, next) => {
 					? (event.id_creator = "You have create this event")
 					: "";
 
-				event.Subscribe.length > 0
-					? event.setDataValue("Subscribe", true)
-					: event.setDataValue("Subscribe", false);
-
-				event.Favorites.length > 0
-					? event.setDataValue("Favorites", true)
-					: event.setDataValue("Favorites", false);
+				checkIFavoritesOrSubscribe(event, Subscribe);
+				checkIFavoritesOrSubscribe(event, Favorites);
 			});
 
 			res.status(200).json({ eventsPublicActive });
@@ -203,24 +195,12 @@ export const getMyEventsCtrl = (req, res, next) => {
 			}
 
 			const eventsPublicActive = events.filter(
-				(event) =>
-					event.private !== "private" &&
-					event.active !== "inactive" &&
-					event.id_creator === req.auth.userId
+				(event) => event.id_creator === req.auth.userId
 			);
 
 			eventsPublicActive.map((event) => {
-				// event.id_creator === req.auth.userId
-				// 	? (event.id_creator = "You have create this event")
-				// 	: "";
-
-				event.Subscribe.length > 0
-					? event.setDataValue("Subscribe", true)
-					: event.setDataValue("Subscribe", false);
-
-				event.Favorites.length > 0
-					? event.setDataValue("Favorites", true)
-					: event.setDataValue("Favorites", false);
+				checkIFavoritesOrSubscribe(event, Subscribe);
+				checkIFavoritesOrSubscribe(event, Favorites);
 			});
 
 			res.status(200).json({ eventsPublicActive });
@@ -373,4 +353,17 @@ export const deleteCtrl = (req, res, next) => {
 		.catch((err) =>
 			res.status(400).json({ message: "Event can't be delete ", error: err })
 		);
+};
+
+const checkIFavoritesOrSubscribe = (event, admission) => {
+	let data = "";
+	let key = "";
+
+	admission === Subscribe
+		? ((data = event.Subscribe), (key = "Subscribe"))
+		: ((data = event.Favorites), (key = "Favorites"));
+
+	data.length > 0
+		? event.setDataValue(key, true)
+		: event.setDataValue(key, false);
 };
