@@ -1,29 +1,31 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
-import 'package:frontend/constants.dart';
-import 'package:frontend/home.dart';
-import 'package:frontend/pages/authentification/signup.dart';
-import 'package:frontend/pages/home/home.dart';
-
-import 'package:google_fonts/google_fonts.dart';
-
 import 'package:frontend/components/progress_hud.dart';
-import 'package:frontend/models/authentification/login.dart';
-import 'package:frontend/api/authentification/login_service.dart';
+
+import 'package:frontend/constants/formfield.dart';
+import 'package:frontend/constants/space.dart';
+import 'package:frontend/constants/text.dart';
+import 'package:frontend/main_home.dart';
+import 'package:frontend/pages/authentification/signup.dart';
+
+import '../../constants/color.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   LoginPageState createState() => LoginPageState();
 }
 
 class LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _emailValid = true;
+  String _errorMessage = '';
   bool hidePassword = true;
   bool isApiCallProcess = false;
-  GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
-  late LoginRequestModel loginRequestModel;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   void showSnackBar(String message) {
@@ -31,10 +33,28 @@ class LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    loginRequestModel = LoginRequestModel(email: '', password: '');
+  bool _invalidCredentials = false;
+
+  bool _validateCredentials() {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final passwordRegex = RegExp(
+        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$');
+
+    return emailRegex.hasMatch(_emailController.text) &&
+        passwordRegex.hasMatch(_passwordController.text);
+  }
+
+  void _submitForm() {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+
+    if (_formKey.currentState!.validate() && _validateCredentials()) {
+      _invalidCredentials = false;
+    } else {
+      setState(() {
+        _invalidCredentials = true;
+      });
+    }
   }
 
   @override
@@ -42,7 +62,8 @@ class LoginPageState extends State<LoginPage> {
     return ProgressHUD(
       inAsyncCall: isApiCallProcess,
       opacity: 0.3,
-      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+      valueColor:
+          const AlwaysStoppedAnimation<Color>(ConstantsColors.primaryColor),
       child: _uiSetup(context),
     );
   }
@@ -53,263 +74,125 @@ class LoginPageState extends State<LoginPage> {
         body: Stack(children: [
           const Background(),
           SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                const SizedBox(
-                  height: 25,
-                ),
-                Center(
-                    child: Text(
-                  'Bienvenue sur MAESTRIP',
-                  style: GoogleFonts.titilliumWeb(
-                    textStyle: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w300,
-                      color: Constants.whiteText,
-                    ),
-                  ),
-                  textAlign: TextAlign.center,
-                )),
-                Stack(
-                  children: <Widget>[
-                    Container(
-                      width: 700,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 30, horizontal: 20),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 35, horizontal: 20),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Constants.lightBackground,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        color: const Color.fromARGB(36, 134, 86, 186),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              offset: const Offset(0, 4),
-                              blurRadius: 6)
-                        ],
-                      ),
-                      child: Form(
-                        key: globalFormKey,
-                        child: Column(
+              child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            const SizedBox(height: 25),
-                            Text(
-                              "Se connecter",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.titilliumWeb(
-                                textStyle: const TextStyle(
-                                    color: Constants.whiteText,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 48),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              style:
-                                  const TextStyle(color: Constants.whiteText),
-                              keyboardType: TextInputType.emailAddress,
-                              onSaved: (input) =>
-                                  loginRequestModel.email = input!,
-                              validator: (input) => !input!.contains('@')
-                                  ? "Email Id should be valid"
-                                  : null,
-                              decoration: const InputDecoration(
-                                hintStyle:
-                                    TextStyle(color: Constants.whiteText),
-                                hintText: "Adresse e-mail",
-                                enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Constants.whiteText)),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Constants.whiteText)),
-                                prefixIcon: Icon(
-                                  Icons.email,
-                                  color: Constants.whiteText,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                              style:
-                                  const TextStyle(color: Constants.whiteText),
-                              keyboardType: TextInputType.text,
-                              onSaved: (input) =>
-                                  loginRequestModel.password = input!,
-                              validator: (input) => input!.length < 3
-                                  ? "Password should be more than 3 characters"
-                                  : null,
-                              obscureText: hidePassword,
-                              decoration: InputDecoration(
-                                hintStyle:
-                                    const TextStyle(color: Constants.whiteText),
-                                hintText: "Mot de passe",
-                                enabledBorder: const UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Constants.whiteText)),
-                                focusedBorder: const UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Constants.whiteText)),
-                                prefixIcon: const Icon(
-                                  Icons.lock,
-                                  color: Constants.whiteText,
-                                ),
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      hidePassword = !hidePassword;
-                                    });
-                                  },
-                                  color: Constants.whiteText,
-                                  icon: Icon(hidePassword
-                                      ? Icons.visibility_off
-                                      : Icons.visibility),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 20),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Constants.lightBackground),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  )),
-                                ),
-                                onPressed: () {
-                                  // if (validateAndSave()) {
-                                  //   print(loginRequestModel.toJson());
-
-                                  //   setState(() {
-                                  //     isApiCallProcess = true;
-                                  //   });
-
-                                  //   Login apiService = Login();
-                                  //   apiService
-                                  //       .login(loginRequestModel)
-                                  //       .then((value) {
-                                  //     if (value != null) {
-                                  //       setState(() {
-                                  //         isApiCallProcess = false;
-                                  //       });
-
-                                  //       if (value.token.isNotEmpty) {
-                                  //         ScaffoldMessenger.of(context)
-                                  //             .showSnackBar(
-                                  //           const SnackBar(
-                                  //               content:
-                                  //                   Text('Connexion Réussie!')),
-                                  //         );
-                                  Timer(const Duration(seconds: 2), () {
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (BuildContext context) =>
-                                                const MainHome()),
-                                        (Route<dynamic> route) => false);
-                                  });
-                                  //       } else {
-                                  //         ScaffoldMessenger.of(context)
-                                  //             .showSnackBar(
-                                  //           SnackBar(
-                                  //               content: Text(value.error)),
-                                  //         );
-                                  //       }
-                                  //     }
-                                  //   });
-                                  // }
-                                },
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(25, 10, 25, 10),
-                                  child: Text(
-                                    "Se connecter",
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.titilliumWeb(
-                                      textStyle: const TextStyle(
-                                          color: Constants.whiteText,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18),
-                                    ),
+                            const SmallSpace(),
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  H1Text(
+                                    text: 'Bienvenue',
                                   ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 20),
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Constants.lightBackground),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  )),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              const SignupPage()),
-                                      (Route<dynamic> route) => false);
-                                },
-                                child: Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        25, 10, 25, 10),
-                                    child: Column(children: [
-                                      Text(
-                                        "Pas encore de compte?",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.titilliumWeb(
-                                          textStyle: const TextStyle(
-                                              color: Constants.whiteText,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18),
+                                  SmallSpace(),
+                                  PText(
+                                    text:
+                                        'Connectez-vous pour découvrir tous les prochains évènements musicaux et rejoindre tes amis !',
+                                  ),
+                                ]),
+                            const LoginForm(pseudo: "guest", profilePicBase64: '',),
+                            Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Column(children: [
+                                  FittedBox(
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            "Vous n'êtes pas inscrit ?",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontFamily: 'Gilroy',
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                color: Colors.white),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          InkWell(
+                                            child: const Text(
+                                              "Inscrivez-vous",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontFamily: 'Gilroy',
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 14,
+                                                  color: Color(0xffB000FD)),
+                                            ),
+                                            onTap: () => Navigator.push(context,
+                                                MaterialPageRoute<void>(builder:
+                                                    (BuildContext context) {
+                                              return const SignupPage();
+                                            })),
+                                          )
+                                        ]),
+                                  ),
+                                  const ComponentsSpace(),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          margin: const EdgeInsets.fromLTRB(
+                                              10, 0, 10, 0),
+                                          height: 0.5,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                      Text(
-                                        "Inscrivez vous ici",
-                                        textAlign: TextAlign.center,
-                                        style: GoogleFonts.titilliumWeb(
-                                          textStyle: const TextStyle(
-                                              color: Constants.whiteText,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18),
+                                      const Text(
+                                        "Ou",
+                                        style: TextStyle(
+                                            fontFamily: 'Gilroy',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
+                                            color: Color.fromARGB(
+                                                127, 255, 255, 255)),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          margin: const EdgeInsets.fromLTRB(
+                                              10, 0, 10, 0),
+                                          height: 0.5,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                    ])),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+                                    ],
+                                  ),
+                                  const ComponentsSpace(),
+                                  FittedBox(
+                                    child: InkWell(
+                                        child: const Text(
+                                          "Se connecter en tant qu'invité ",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontFamily: 'Gilroy',
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        ),
+                                        onTap: () => Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        const MainHome(pseudo: "guest", profilePicBase64: '',)),
+                                                (Route<dynamic> route) =>
+                                                    false)),
+                                  ),
+                                  const ComponentsSpace()
+                                ]))
+                          ]))))
         ]));
-  }
-
-  bool validateAndSave() {
-    final form = globalFormKey.currentState;
-    if (form!.validate()) {
-      form.save();
-      return true;
-    }
-    return false;
   }
 }

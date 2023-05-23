@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'package:frontend/constants.dart';
+import 'package:frontend/constants/color.dart';
+import 'package:frontend/constants/text.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class EventsPageState extends State<EventsPage> {
                 padding: const EdgeInsets.all(8),
                 children: [
                   Center(
-                    child: TextSection(
+                    child: PText(
                       text: translation.events,
                     ),
                   ),
