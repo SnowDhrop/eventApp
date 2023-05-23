@@ -11,23 +11,26 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class MainHome extends StatefulWidget {
-  const MainHome({Key? key}) : super(key: key);
+  final String pseudo;
+	final String profilePicBase64;
+  const MainHome({Key? key, required this.pseudo, required this.profilePicBase64}) : super(key: key);
 
   @override
   State<MainHome> createState() => _MainHomeState();
 }
 
 class _MainHomeState extends State<MainHome> {
-  final _pages = [
-    const HomePage(),
-    const MapPage(),
-    const EventsPage(),
-  ];
-
+  late List<Widget> _pages;
   int _selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
+    _pages = [
+      HomePage(pseudo: widget.pseudo, profilePicBase64: widget.profilePicBase64,),
+      const MapPage(),
+      const EventsPage(),
+    ];
   }
 
   @override

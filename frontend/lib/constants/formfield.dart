@@ -1,14 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/api/signup_service.dart';
+import 'package:frontend/api/authenticatification/login_service.dart';
+import 'package:frontend/api/authenticatification/signup_service.dart';
 import 'package:frontend/constants/color.dart';
 import 'package:frontend/constants/space.dart';
+import 'package:frontend/main_home.dart';
 import 'package:frontend/models/authentification/signup.dart';
 import 'package:frontend/pages/authentification/login.dart';
+import 'package:frontend/constants/validators.dart';
+import 'package:frontend/pages/home/home.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({Key? key}) : super(key: key);
+	final String pseudo;
+	final String profilePicBase64;
+  const LoginForm({Key? key, required this.pseudo, required this.profilePicBase64}) : super(key: key);
 
   @override
   LoginFormState createState() => LoginFormState();
@@ -18,11 +26,10 @@ class LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _emailValid = true;
-  String _errorMessage = '';
   bool hidePassword = true;
   bool isApiCallProcess = false;
-
+  bool _invalidCredentials = false;
+  String _errorMessage = '';
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   void showSnackBar(String message) {
@@ -30,30 +37,33 @@ class LoginFormState extends State<LoginForm> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  bool _invalidCredentials = false;
-
-  bool _validateCredentials() {
-    final emailRegex =
-        RegExp(r'/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/');
-    final passwordRegex = RegExp(
-        r'^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-_=!;,?.:])[a-zA-Z0-9-_=!;,?.:]{8,16}$');
-
-    return emailRegex.hasMatch(_emailController.text) &&
-        passwordRegex.hasMatch(_passwordController.text);
-  }
-
-  void _submitForm() {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-
-    if (_formKey.currentState!.validate() && _validateCredentials()) {
-      _invalidCredentials = false;
-    } else {
+void _submitForm(BuildContext context) {
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    setState(() {
+      isApiCallProcess = true;
+    });
+    submitLogin(_emailController.text.trim(), _passwordController.text.trim(),
+        (message) {
       setState(() {
-        _invalidCredentials = true;
+        isApiCallProcess = false;
+        _errorMessage = message;
       });
-    }
+    }).then((value) {
+      setState(() {
+        isApiCallProcess = false;
+      });
+      Navigator.of(context)
+				.pushAndRemoveUntil(
+						MaterialPageRoute(
+								builder: (BuildContext
+												context) =>
+										MainHome(pseudo: widget.pseudo, profilePicBase64: widget.profilePicBase64,)),
+						(Route<dynamic> route) =>
+								false);
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +77,8 @@ class LoginFormState extends State<LoginForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+            onSaved: (val) => {},
+            validator: emailValidator,
             hintTextColor: ConstantsColors.greyText,
             iconColor: ConstantsColors.blackBackground,
             hintText: "Email",
@@ -87,6 +99,8 @@ class LoginFormState extends State<LoginForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+            onSaved: (val) => {},
+            validator: passwordValidator,
             hintTextColor: ConstantsColors.greyText,
             iconColor: ConstantsColors.blackBackground,
             hintText: "Mot de passe",
@@ -131,7 +145,7 @@ class LoginFormState extends State<LoginForm> {
                     ])),
             child: ElevatedButton(
               onPressed: () {
-                _submitForm();
+                _submitForm(context);
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -197,7 +211,7 @@ class SignUpFormState extends State<SignUpForm> {
   void initState() {
     super.initState();
     signupRequestModel = SignupRequestModel(
-        email: '', password: '', confirmPassword: '', birthday: '', pseudo: '');
+        email: '', password: '', birthday: '', pseudo: '');
   }
 
   @override
@@ -222,6 +236,8 @@ class SignUpFormState extends State<SignUpForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+						onSaved: (val) => setState(() => signupRequestModel.pseudo = val!),
+						validator: pseudoValidator,
             hintText: 'Pseudo',
             prefixIcon: Icons.person_2_rounded,
             controller: _pseudoController,
@@ -241,6 +257,8 @@ class SignUpFormState extends State<SignUpForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+						onSaved: (val) => setState(() => signupRequestModel.birthday = val!),
+						validator: birthdayValidator,
             hintText: 'Date de naissance',
             prefixIcon: Icons.calendar_today_rounded,
             controller: _birthdayController,
@@ -260,6 +278,8 @@ class SignUpFormState extends State<SignUpForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+						onSaved: (val) => setState(() => signupRequestModel.email = val!),
+						validator: emailValidator,
             hintText: 'Email',
             prefixIcon: Icons.mail_rounded,
             controller: _emailController,
@@ -279,6 +299,8 @@ class SignUpFormState extends State<SignUpForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+						onSaved: (val) => setState(() => signupRequestModel.password = val!),
+						validator: passwordValidator,
             hintText: 'Mot de passe',
             prefixIcon: Icons.lock_rounded,
             controller: _passwordController,
@@ -299,6 +321,8 @@ class SignUpFormState extends State<SignUpForm> {
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(10)),
           child: CustomFormField(
+						onSaved: (val) => setState(() => signupRequestModel.password = val!),
+						validator: confirmPasswordValidator,
             hintText: 'Confirmer mot de passe',
             prefixIcon: Icons.lock_rounded,
             controller: _confirmPasswordController,
@@ -333,7 +357,7 @@ class SignUpFormState extends State<SignUpForm> {
                     shadowColor: Colors.transparent),
             	onPressed: () {
 								if (_submitForm()) {
-									_registerAccount();
+									_registerAccount(context);
 								}
 							},
             child: const Padding(
@@ -354,6 +378,15 @@ class SignUpFormState extends State<SignUpForm> {
 );
   }
 
+String? confirmPasswordValidator(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please confirm your password';
+  }
+  if (value != _passwordController.text) {
+    return 'Passwords do not match';
+  }
+  return null;
+}
 bool _submitForm() {
   if (_formKey.currentState!.validate()) {
     _formKey.currentState!.save();
@@ -362,51 +395,64 @@ bool _submitForm() {
   return false;
 }
 
-void _registerAccount() async {
+void _registerAccount(BuildContext context) async {
 	final email = _emailController.text;
 	final password = _passwordController.text;
 	final pseudo = _pseudoController.text;
 	final birthday = _birthdayController.text;
+	final confirmPassword = _confirmPasswordController.text;
 
-		setState(() {
+
+	// Check if the password and confirmation password match
+	if (password != confirmPassword) {
+		ScaffoldMessenger.of(context).showSnackBar(
+			const SnackBar(content: Text("The password and confirmation password don't match")),
+		);
+		return;
+	}
+
+	setState(() {
 		isApiCallProcess = true;
 	});
 
 	final signupService = SignupService(); // Create an instance of ApiService
 	final response = await signupService.signup(signupRequestModel);
-	print(response);
-	 print('Inside _registerAccount()');
-	if (response != null && response.statusCode == 200) {
-		Navigator.push(
-			context,
-			MaterialPageRoute(builder: (context) => const LoginPage()),
-		);
-	} else {
-		setState(() {
-			isApiCallProcess = false;
-			if (response != null) {
-				if (response.data['errors'] != null) {
-					_errorMessage = '';
-					List<dynamic> errors = response.data['errors'];
-					for (var error in errors) {
-						_errorMessage += '${error['msg']} ';
-					}
-				} else if (response.data['err'] != null &&
-						response.data['err']['name'] ==
-								'SequelizeUniqueConstraintError') {
-					_errorMessage = 'Pseudo or email already exists. Please try again.';
-				} else {
-					_errorMessage = "Error signing up. Please try again later.";
+	
+	if (response != null) {
+		if (response.statusCode == 201) {
+			ScaffoldMessenger.of(context).showSnackBar(
+				const SnackBar(content: Text('Confirmation Mail Send')),
+			);
+			  await Future.delayed(const Duration(seconds: 1));
+			Navigator.push(
+				context,
+				MaterialPageRoute(builder: (context) => const LoginPage()),
+			);
+		} else {
+			if (response.data['errors'] != null) {
+				_errorMessage = '';
+				List<dynamic> errors = response.data['errors'];
+				for (var error in errors) {
+					_errorMessage += '${error['msg']} ';
 				}
+			} else if (response.data['err'] != null && response.data['err']['name'] == 'SequelizeUniqueConstraintError') {
+				_errorMessage = 'Pseudo or email already exists. Please try again.';
 			} else {
 				_errorMessage = "Error signing up. Please try again later.";
 			}
-		});
-		ScaffoldMessenger.of(context).showSnackBar(
-			SnackBar(content: Text(_errorMessage)),
-		);
-	}
-  }
+		}
+	} else {
+		_errorMessage = "Error signing up. Please try again later.";
+}
+
+	setState(() {
+		isApiCallProcess = false;
+	});
+
+	ScaffoldMessenger.of(context).showSnackBar(
+		SnackBar(content: Text(_errorMessage)),
+	);
+}
 }
 
 class CustomFormField extends StatefulWidget {
@@ -418,8 +464,12 @@ class CustomFormField extends StatefulWidget {
   final TextInputType textInputType;
   final Color hintTextColor;
   final Color iconColor;
+	final FormFieldValidator<String>? validator;
+	final Function(String?)? onSaved;
 
   const CustomFormField({
+		required this.validator,
+		required this.onSaved,
     required this.hintText,
     required this.prefixIcon,
     required this.controller,
@@ -441,6 +491,8 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+			validator: widget.validator,
+			onSaved: widget.onSaved,
       style: widget.textStyle,
       controller: widget.controller,
       obscureText: widget.isPasswordField ? hidePassword : false,

@@ -94,7 +94,7 @@ class LoginPageState extends State<LoginPage> {
                                         'Connectez-vous pour découvrir tous les prochains évènements musicaux et rejoindre tes amis !',
                                   ),
                                 ]),
-                            const LoginForm(),
+                            const LoginForm(pseudo: "guest", profilePicBase64: '',),
                             Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Column(children: [
@@ -186,7 +186,7 @@ class LoginPageState extends State<LoginPage> {
                                                 MaterialPageRoute(
                                                     builder: (BuildContext
                                                             context) =>
-                                                        const MainHome()),
+                                                        const MainHome(pseudo: "guest", profilePicBase64: '',)),
                                                 (Route<dynamic> route) =>
                                                     false)),
                                   ),

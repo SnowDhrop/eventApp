@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/api/signup_service.dart';
+import 'package:frontend/api/authenticatification/signup_service.dart';
 
 import 'package:frontend/constants/color.dart';
 import 'package:frontend/constants/formfield.dart';
@@ -13,6 +13,7 @@ import 'package:frontend/components/progress_hud.dart';
 import 'package:frontend/models/authentification/signup.dart';
 
 class SignupPage extends StatefulWidget {
+
   const SignupPage({super.key});
 
   @override
@@ -37,12 +38,7 @@ class SignupPageState extends State<SignupPage> {
   FocusNode focusNode = FocusNode();
   late SignupRequestModel signupRequestModel;
 
-  @override
-  void initState() {
-    super.initState();
-    signupRequestModel = SignupRequestModel(
-        email: '', password: '', confirmPassword: '', birthday: '', pseudo: '');
-  }
+
 
   @override
   void dispose() {
