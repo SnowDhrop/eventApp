@@ -12,8 +12,6 @@ const User = sequelize.models.user;
 // Rajouter la possibilité de spécifier des utilisateurs qui peuvent s'inscrire aux events privés
 // Filtre pour les events par catégorie et/ou style et/ou favoris et/ou inscris
 
-// Pouvoir compter le nombre d'utilisateurs inscris et les ajouter au nombre de participants
-
 // Rajouter un cas d'utilisation: si l'utilisateur a créé l'évènement, l'inscrit automatiquement à l'event
 // et il ne peut pas s'y désinscrire
 
@@ -28,7 +26,12 @@ export const createCtrl = (req, res, next) => {
 		...req.body,
 		id_creator: req.auth.userId,
 	})
-		.then(() => res.status(201).json({ message: "Event added" }))
+		.then((event) => {
+			Subscribe.create({
+				id_user: req.auth.userId,
+				id_event: event.id_event,
+			}).then(() => res.status(201).json({ message: "Event added" }));
+		})
 		.catch((err) => res.status(400).json({ err }));
 };
 
@@ -211,61 +214,114 @@ export const getMyEventsCtrl = (req, res, next) => {
 		.catch((err) => res.status(400).json({ err }));
 };
 
-export const subscribeCtrl = (req, res, next) => {
-	//Same logic of favorites
-	Subscribe.destroy({
-		where: { id_event: req.params.id, id_user: req.auth.userId },
-	})
-		.then((deletion) => {
-			if (deletion === 1) {
-				return res.status(200).json({
-					message: "You are not subscribed to this event anymore",
-				});
-			}
-
-			// Verify if the event exist and if he's inactive or private, send a 401 message, otherwise create a relation
-			Event.findOne({
+export const subscribeCtrl = async (req, res, next) => {
+	const tcheckUserCreator = async () => {
+		try {
+			const event = await Event.findOne({
 				where: { id_event: req.params.id },
-				attributes: ["active", "private"],
-			})
-				.then((event) => {
-					if (event.active === "inactive" || event.private === "private") {
-						throw "This event is private or inactive";
-					}
+				attributes: ["id_event", "id_creator", "participants"],
+			});
 
-					if (event.participants === event.participants_max) {
-						throw "The number of participants is reached";
-					}
+			if (event.id_creator === req.auth.userId) {
+				throw new Error("You can't unsubscribe to an event that you create");
+			} else {
+				return true;
+			}
+		} catch (err) {
+			res.status(404).json({ err: err.message });
+		}
+	};
 
-					Subscribe.create({
-						id_user: req.auth.userId,
-						id_event: req.params.id,
-					})
-						.then(() =>
-							res.status(201).json({
-								message: "You have subscribe to this event",
-							})
-						)
-						.catch((err) =>
-							res.status(500).json({ message: "Server error", error: err })
-						);
-				})
-				.catch((err) => {
-					let message = {};
+	const canContinue = await tcheckUserCreator();
 
-					err.length > 0
-						? (message = { error: err })
-						: (message = { message: "Event not found" });
-
-					res.status(404).json({ message });
-				});
+	if (canContinue === true) {
+		//Same logic of favorites
+		Subscribe.destroy({
+			where: { id_event: req.params.id, id_user: req.auth.userId },
 		})
-		.catch((err) =>
-			res.status(500).json({
-				message: "Can't unsubscribe of this event",
-				error: err,
+			.then((deletion) => {
+				if (deletion === 1) {
+					Event.findOne({
+						where: { id_event: req.params.id },
+						attributes: ["id_event", "id_creator", "participants"],
+					})
+						.then((event) => {
+							event.participants--;
+							event.save();
+
+							res.status(200).json({
+								message: "You are not subscribe to this event anymore",
+							});
+						})
+						.catch((err) => {
+							let message = "";
+
+							err
+								? (message = err)
+								: (message = "You can't unsubscribe to this event");
+
+							res.status(418).json({ message });
+						});
+				} else {
+					// Verify if the event exist and if he's inactive or private, send a 401 message, otherwise create a relation
+					Event.findOne({
+						where: { id_event: req.params.id },
+						attributes: [
+							"id_event",
+							"id_creator",
+							"active",
+							"private",
+							"participants",
+							"participants_max",
+						],
+					})
+						.then((event) => {
+							if (
+								event.active === "inactive" ||
+								event.private === "private" ||
+								event.id_creator === req.auth.userId
+							) {
+								throw "This event is private or inactive or you're the creator of this event";
+							}
+
+							if (event.participants === event.participants_max) {
+								throw "The number of participants is reached";
+							}
+
+							Subscribe.create({
+								id_user: req.auth.userId,
+								id_event: req.params.id,
+							})
+								.then(() => {
+									event.participants++;
+									event.save();
+
+									res.status(201).json({
+										message: "You have subscribe to this event",
+									});
+								})
+								.catch((err) =>
+									res.status(500).json({ message: "Server error", error: err })
+								);
+						})
+						.catch((err) => {
+							let message = {};
+
+							err.length > 0
+								? (message = { error: err })
+								: (message = { message: "Event not found" });
+
+							res.status(404).json({ message });
+						});
+				}
 			})
-		);
+			.catch((err) =>
+				res.status(500).json({
+					message: "Can't unsubscribe of this event",
+					error: err,
+				})
+			);
+	}
 };
 
 export const favoritesCtrl = (req, res, next) => {

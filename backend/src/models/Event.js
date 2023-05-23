@@ -42,7 +42,7 @@ const Event = sequelize.define("event", {
 	},
 	participants: {
 		type: Sequelize.INTEGER(11),
-		defaultValue: 0,
+		defaultValue: 1,
 	},
 	participants_max: {
 		type: Sequelize.INTEGER(11),

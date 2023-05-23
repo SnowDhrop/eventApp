@@ -54,8 +54,10 @@ sequelize
 		await sequelize.query("SET FOREIGN_KEY_CHECKS = 1", { raw: true });
 	})
 	.then(() => {
-		console.log("Table dropped");
+		console.log("Tables dropped");
+		sequelize.close();
 	})
 	.catch((err) => {
 		console.error("Unable to connect to the database:", err);
+		sequelize.close();
 	});
