@@ -12,9 +12,6 @@ const User = sequelize.models.user;
 // Rajouter la possibilité de spécifier des utilisateurs qui peuvent s'inscrire aux events privés
 // Filtre pour les events par catégorie et/ou style et/ou favoris et/ou inscris
 
-// Rajouter un cas d'utilisation: si l'utilisateur a créé l'évènement, l'inscrit automatiquement à l'event
-// et il ne peut pas s'y désinscrire
-
 export const createCtrl = (req, res, next) => {
 	const errors = validationResult(req);
 
