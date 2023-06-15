@@ -235,3 +235,8 @@ export const changePassRequest = (req, res, next) => {
 		})
 		.catch((err) => res.status(500).json({ err }));
 };
+
+export const associateArtists = (req, res, next) => {
+	console.log("YOLO");
+	res.send("YOLO");
+};

@@ -12,6 +12,9 @@ import Style from "./Style.js";
 import Subscribe from "./Subscribe.js";
 import Users_Challenge from "./Users_Challenge.js";
 import Favorites from "./Favorites.js";
+import Artist from "./Artists.js";
+import Users_Artist from "./Users_Artist.js";
+import Users_Style from "./Users_Style.js";
 
 // DEFINE FOREIGN KEYS
 //Subscribe
@@ -65,6 +68,34 @@ User.belongsToMany(Challenge, {
 Challenge.belongsToMany(User, {
 	through: Users_Challenge,
 	foreignKey: "id_challenge",
+	unique: false,
+});
+
+// PREFERENCES USER RELATIONS
+Style.hasMany(Artist, { foreignKey: "id_style" });
+Artist.belongsTo(Style, { foreignKey: "id_style" });
+
+//Users_Artist
+User.belongsToMany(Artist, {
+	through: Users_Artist,
+	foreignKey: "id_user",
+	unique: false,
+});
+Artist.belongsToMany(User, {
+	through: Users_Artist,
+	foreignKey: "id_artist",
+	unique: false,
+});
+
+//Users_Style
+User.belongsToMany(Style, {
+	through: Users_Style,
+	foreignKey: "id_user",
+	unique: false,
+});
+Style.belongsToMany(User, {
+	through: Users_Style,
+	foreignKey: "id_style",
 	unique: false,
 });
 

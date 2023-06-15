@@ -78,4 +78,7 @@ router.post(
 router.get("/change/:code", confirmationEmail.changePassword);
 // END CHANGE PASSWORD
 
+// Association artists
+router.get("/artists", auth, userControllers.associateArtists);
+
 export default router;

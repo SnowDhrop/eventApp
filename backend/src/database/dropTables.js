@@ -12,6 +12,7 @@ import Social from "./../models/Social.js";
 import Style from "./../models/Style.js";
 import User from "./../models/User.js";
 import Users_Challenge from "./../models/Users_Challenge.js";
+import Artist from "../models/Artists.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ const models = [
 	Favorites,
 	Subscribe,
 	Event,
+	Artist,
 	Style,
 	Category,
 	Users_Challenge,
