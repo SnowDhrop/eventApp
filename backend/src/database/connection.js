@@ -11,6 +11,7 @@ const sequelize = new Sequelize(DATABASE, DBUSER, DBMDP, {
 	pool: {
 		max: 5,
 		min: 0,
+		acquire: 600000,
 		idle: 10000,
 	},
 	logging: false,

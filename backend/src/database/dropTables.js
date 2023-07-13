@@ -13,6 +13,8 @@ import Style from "./../models/Style.js";
 import User from "./../models/User.js";
 import Users_Challenge from "./../models/Users_Challenge.js";
 import Artist from "../models/Artists.js";
+import Users_Artist from "../models/Users_Artist.js";
+import Users_Style from "../models/Users_Style.js";
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ const models = [
 	Favorites,
 	Subscribe,
 	Event,
+	Users_Artist,
+	Users_Style,
 	Artist,
 	Style,
 	Category,
@@ -53,6 +57,7 @@ sequelize
 		for (let i = 0; i < models.length; i++) {
 			await models[i].drop({ force: true });
 		}
+
 		await sequelize.query("SET FOREIGN_KEY_CHECKS = 1", { raw: true });
 	})
 	.then(() => {
