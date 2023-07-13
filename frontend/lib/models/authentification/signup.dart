@@ -13,24 +13,24 @@ class SignupResponseModel {
 }
 
 class SignupRequestModel {
+  String pseudo;
   String email;
   String password;
-  String pseudo;
-  String phone;
+  String birthday;
 
   SignupRequestModel({
+    required this.pseudo,
     required this.email,
     required this.password,
-    required this.pseudo,
-    required this.phone,
+    required this.birthday,
   });
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
+      'pseudo': pseudo.trim(),
       'email': email.trim(),
       'password': password.trim(),
-      'pseudo': pseudo.trim(),
-      'phone': phone.trim(),
+      'birthday': birthday.trim(),
     };
 
     return map;

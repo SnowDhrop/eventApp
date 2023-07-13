@@ -19,15 +19,21 @@ dependencies:
 
   intl: any
   provider: ^6.0.5
-  rive: ^0.10.2
   http: ^0.13.5
 
   flutter_map: ^3.1.0
   latlong2: ^0.8.1
   anim_search_bar: ^2.0.3
-
-
-
+  dio: ^5.0.2
+  shared_preferences: ^2.1.0
+  flutter_svg: ^2.0.4
+  draggable_home: ^1.0.4
+  location: ^4.4.0
+  app_settings: ^4.2.0
+  permission_handler: ^10.2.0
+  email_validator: ^2.1.17
+  flutter_secure_storage: ^8.0.0
+  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -42,9 +48,9 @@ flutter:
   generate: true
 
   assets:
-    - assets/rive_icons/
     - assets/background/
     - assets/logo/
+    - assets/icons/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -58,10 +64,25 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Gilroy
+      fonts:
+        - asset: assets/fonts/gilroy/Gilroy-UltraLight.ttf
+          weight: 100
+        - asset: assets/fonts/gilroy/Gilroy-Light.ttf
+          weight: 200
+        - asset: assets/fonts/gilroy/Gilroy-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/gilroy/Gilroy-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/gilroy/Gilroy-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/gilroy/Gilroy-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/gilroy/Gilroy-ExtraBold.ttf
+          weight: 800
+
+
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
